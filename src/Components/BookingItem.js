@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from "prop-types";
 
 class BookingItem extends Component {
 
@@ -13,6 +14,12 @@ class BookingItem extends Component {
             </li>
         );
     }
+}
+
+
+BookingItem.propTypes = {
+    booking: PropTypes.object,
+    onDelete: PropTypes.func
 }
 
 export default BookingItem;

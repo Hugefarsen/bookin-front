@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import uuid from 'uuid';
+import BookingItem from "./BookingItem";
+import PropTypes from "prop-types";
 
 
 class AddBooking extends Component {
@@ -68,6 +70,11 @@ class AddBooking extends Component {
             </div>
         );
     }
+}
+
+AddBooking.propTypes = {
+    supervisor: PropTypes.array,
+    addBooking: PropTypes.func
 }
 
 export default AddBooking;

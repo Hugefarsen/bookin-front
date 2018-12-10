@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BookingItem from './BookingItem';
+import PropTypes from 'prop-types';
 
 class Bookings extends Component {
     deleteBooking(id){
@@ -23,6 +24,11 @@ class Bookings extends Component {
             </div>
         );
     }
+}
+
+Bookings.propTypes = {
+    bookings: PropTypes.array,
+    onDelete: PropTypes.func
 }
 
 export default Bookings;
