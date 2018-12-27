@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import uuid from 'uuid';
 import $ from 'jquery';
-import Bookings from './Components/Bookings';
-import AddBooking from './Components/AddBooking';
-import Supervisors from './Components/Supervisors';
+import Activities from "./Components/Activities";
 
 import './App.css';
 
@@ -11,20 +8,19 @@ class App extends Component {
     constructor(){
         super();
         this.state = {
-            bookings: [],
-            todos: [],
-            supervisors: []
+            activities: [],
         }
     }
 
-    getTodos(){
+    getActivities(){
         $.ajax({
-            url: 'https://jsonplaceholder.typicode.com/todos/',
+            url: 'http://localhost:8888/bookin-api/public/api/activity',
             dataType: 'json',
             cache: false,
             success: function(data){
-                this.setState({todos: data}, function(){
-                    console.log(data);
+                this.setState({activities: data.data}, function(){
+                    console.log(this.state);
+                    console.log(this.state.activities);
                 })
             }.bind(this),
             error: function(xhr, status, err){
@@ -33,66 +29,20 @@ class App extends Component {
         })
     }
 
-    getBookings(){
-        this.setState({bookings: [
-            {
-                id: uuid.v4(),
-                supervisor: 'Folke',
-                type: 'Yoga',
-                date: '12/12',
-                time: '16.00',
-                location: 'Stockholm',
-                capacity: '32/32'
-            }, {
-            id: uuid.v4(),
-                    supervisor: 'Emilie',
-                    type: 'Spinning',
-                    date: '12/12',
-                    time: '13.00',
-                    location: 'Stockholm',
-                    capacity: '32/32'
-                },
-                {
-                    id: uuid.v4(),
-                    supervisor: 'Kim',
-                type: 'Yoga',
-                date: '12/12',
-                time: '12.00',
-                location: 'Stockholm',
-                capacity: '32/32'
-                },
-            ]})
-    }
 
     componentWillMount(){
-        this.getBookings();
-        this.getTodos();
+        this.getActivities()
     }
 
     componentDidMount(){
-        this.getTodos();
-    }
-
-    handleAddBooking(booking){
-        let bookings = this.state.bookings;
-        bookings.push(booking);
-        this.setState({bookings:bookings})
-    }
-
-    handleDeleteBooking(id){
-        let bookings = this.state.bookings;
-        let index = bookings.findIndex(x => x.id === id);
-        bookings.splice(index, 1);
-        this.setState({bookings:bookings})
+        this.getActivities();
     }
 
     render() {
         return (
             <div className="App">
-                <AddBooking addBooking={this.handleAddBooking.bind(this)}/>
-                <Bookings bookings={this.state.bookings} onDelete={this.handleDeleteBooking.bind(this)}/>
+                <Activities activities={this.state.activities} />
                 <hr />
-                <Supervisors supervisors={this.state.supervisors} />
             </div>
         );
     }
