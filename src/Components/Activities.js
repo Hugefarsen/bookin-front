@@ -7,7 +7,6 @@ class Activities extends Component {
     render() {
         let activityItems;
         if (this.props.activities){
-            console.log(this.props.activities);
             activityItems = this.props.activities.map(activity => {
                 return (
                     <ActivityItem key={activity.name} activity={activity}/>

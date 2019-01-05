@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import $ from 'jquery';
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
@@ -8,6 +8,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import Activities from "./Components/Activities";
 
 import './App.css';
+import './DateTime.css';
 
 class App extends Component {
     constructor(){
@@ -16,6 +17,7 @@ class App extends Component {
             isAuthenticated: false,
             isAuthenticating: true,
             activities: [],
+            user: {},
         }
     }
 
@@ -25,38 +27,57 @@ class App extends Component {
 
     handleLogout = event => {
         this.userHasAuthenticated(false);
-    }
+        this.setState({user: {}})
+        localStorage.setItem('user', "");
+        this.props.history.push("/login");
+
+    };
 
     getActivities(){
         $.ajax({
             url: 'http://localhost:8888/bookin-api/public/api/activity',
             dataType: 'json',
+            data: {'Authorization' : 'Bearer'+this.state.user.token},
             cache: false,
             success: function(data){
                 this.setState({activities: data.data}, function(){
-                    console.log(this.state);
-                    console.log(this.state.activities);
+                  //  console.log(this.state);
+                  //  console.log(this.state.activities);
                 })
             }.bind(this),
             error: function(xhr, status, err){
-                console.log(err);
+                //console.log(err);
             }
         })
     }
 
+    getLoggedUser(){
+        if(localStorage.getItem('user')){
+            let user = JSON.parse(localStorage.getItem('user'))
+            if (user.token){
+                this.setState({user : user})
+                this.userHasAuthenticated(true);
+            }
+        }
+        this.setState({ isAuthenticating: false });
+    }
 
     componentWillMount(){
-        this.getActivities()
+        this.getLoggedUser();
+        //this.getActivities();
     }
 
     componentDidMount(){
-        this.getActivities();
+        this.getLoggedUser();
+       // this.getActivities();
+
     }
 
     render() {
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
-            userHasAuthenticated: this.userHasAuthenticated
+            userHasAuthenticated: this.userHasAuthenticated,
+            user: this.state.user,
         };
 
         return (
@@ -95,4 +116,5 @@ class App extends Component {
     }
 }
 
-export default App;
+export default withRouter(App);
+;

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Login.css";
+import LoaderButton from "../Components/LoaderButton";
 import $ from "jquery";
 
 class Login extends Component {
@@ -8,9 +9,9 @@ class Login extends Component {
         super(props);
 
         this.state = {
+            isLoading: false,
             email: "",
             password: "",
-            userToken: "",
         };
     }
 
@@ -27,6 +28,8 @@ class Login extends Component {
     handleSubmit = async event => {
         event.preventDefault();
 
+        this.setState({ isLoading: true });
+
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8888/bookin-api/public/api/login',
@@ -38,15 +41,20 @@ class Login extends Component {
             cache: false,
             success: function(data){
                 this.props.userHasAuthenticated(true);
+                console.log(data);
                 this.setState( {userToken : data.success.token}, function(){
-                    console.log(this.state);
-                    }
-                )
+                    this.setState({password: ""});
+                    localStorage.setItem('user', JSON.stringify(data.success));
+                    this.setState({ isLoading: false });
+                    this.props.history.push("/")
+                })
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
             }
-        })
+        });
+
+
     };
 
     render() {
@@ -70,14 +78,15 @@ class Login extends Component {
                             type="password"
                         />
                     </FormGroup>
-                    <Button
+                    <LoaderButton
                         block
                         bsSize="large"
                         disabled={!this.validateForm()}
                         type="submit"
-                    >
-                        Login
-                    </Button>
+                        isLoading={this.state.isLoading}
+                        text="Login"
+                        loadingText="Logging in…"
+                    />
                 </form>
             </div>
         );
