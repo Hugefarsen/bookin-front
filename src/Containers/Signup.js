@@ -32,15 +32,6 @@ export default class Signup extends Component {
         });
     }
 
-    getLoggedUser(){
-        if(localStorage.getItem('user')){
-            let user = JSON.parse(localStorage.getItem('user'))
-            if (user.token){
-                this.setState({user : user})
-            }
-        }
-        this.setState({ isAuthenticating: false });
-    }
 
     handleSubmit = async event => {
         event.preventDefault();
@@ -59,17 +50,11 @@ export default class Signup extends Component {
             },
             cache: false,
             success: function(data){
-                this.props.userHasAuthenticated(true);
-                console.log(data);
-                this.setState({userToken : data.success.token}, function(){
-                    this.setState({password: "", email: "", c_password: ""});
+                this.props.userLog(data.success);
+                this.setState({password: "", email: "", c_password: "", isLoading: false }, function(){
                     localStorage.setItem('user', JSON.stringify(data.success));
-                    this.setState({ isLoading: false });
-                    this.getLoggedUser();
                     })
-                this.props.history.push("/")
-
-
+                this.props.userHasAuthenticated(true);
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);

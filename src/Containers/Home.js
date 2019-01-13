@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { PageHeader, ListGroup } from "react-bootstrap";
+import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import "./Home.css";
 import $ from "jquery";
 
@@ -9,45 +10,29 @@ export default class Home extends Component {
 
         this.state = {
             isLoading: true,
-            activities: []
+            activities: [],
         };
-        console.log(this);
+
+        this.renderActivitesList = this.renderActivitesList;
     }
 
-    componentDidMount(){
-        console.log(this.props.user.token);
-        if (this.props.user) {
-            $.ajax({
-                url: 'http://localhost:8888/bookin-api/public/api/activity',
-                dataType: 'json',
-                data: {'Authorization' : 'Bearer'+this.props.user.token},
-                cache: false,
-                success: function(data){
-                    this.setState({activities: data.data}, function(){
-                        console.log(this.state);
-                        console.log(this.state.activities);
-                    })
-                }.bind(this),
-                error: function(xhr, status, err){
-                    console.log(err);
-                }
-            })
-        }
+    componentWillMount() {
         this.getActivities();
     }
 
     getActivities(){
-        if (this.state.user) {
+        if (this.props.user) {
             $.ajax({
                 url: 'http://localhost:8888/bookin-api/public/api/activity',
                 dataType: 'json',
-                data: {'Authorization' : 'Bearer'+this.state.user.token},
+                headers: {
+                    'Authorization': 'Bearer ' + this.props.user.token,
+                },
                 cache: false,
                 success: function(data){
+                    console.log(data.data);
                     this.setState({activities: data.data}, function(){
-                        console.log(this.state);
-                        console.log(this.state.activities);
-                    })
+                    });
                 }.bind(this),
                 error: function(xhr, status, err){
                     console.log(err);
@@ -56,10 +41,40 @@ export default class Home extends Component {
         }
     }
 
-
     renderActivitesList(activities) {
-        return null;
+        return [{}].concat(activities).map(
+            (activity, i) => i !== 0
+                ? <LinkContainer
+                    key={activity.id}
+                    to={`/activity/${activity.id}`}
+                >
+                    <ListGroupItem header={activity.categories.name.trim().split("\n")[0]}>
+                        {"Start: " + new Date(activity.start).toLocaleString()}
+                        <br/>
+                        {"End: " + new Date(activity.end).toLocaleString()}
+                        <br/>
+                        {"Room: " + activity.room.name}
+
+                    </ListGroupItem>
+                </LinkContainer>
+                : null
+        )
     }
+
+
+    renderCreateActivity(){
+        return <LinkContainer
+            key="new"
+            to="/activity/new"
+        >
+            <ListGroupItem>
+                <h4>
+                    <b>{"\uFF0B"}</b> Create a new activity
+                </h4>
+            </ListGroupItem>
+        </LinkContainer>
+    }
+
 
     renderLander() {
         return (
@@ -75,19 +90,18 @@ export default class Home extends Component {
             <div className="activities">
                 <PageHeader>Your Activities</PageHeader>
                 <ListGroup>
-                    {!this.state.isLoading && this.renderActivitesList(this.state.activities)}
+                    {this.props.isAdmin && this.renderCreateActivity()}
+                    {this.renderActivitesList(this.state.activities)}
                 </ListGroup>
             </div>
         );
     }
 
-
-
     render() {
         return (
             <div className="Home">
                 {this.props.isAuthenticated ? this.renderActivities() : this.renderLander()}
-            </div>
+                </div>
         );
     }
 }

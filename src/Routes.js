@@ -3,20 +3,52 @@ import { Route, Switch } from "react-router-dom";
 import Home from "./Containers/Home";
 import Login from "./Containers/Login";
 import Signup from "./Containers/Signup";
+
+import Admin from "./Containers/Admin";
+
+/*
+import Room from "./Containers/Room";
+*/
+import Rooms from "./Containers/Rooms";
+/*
+import Category from "./Containers/Category"
+*/
+import Categories from "./Containers/Categories"
+/*
+import User from "./Containers/User"
+import Users from "./Containers/Users";
+*/
 import AddActivity from "./Containers/AddActivity";
 
-import NotFound from "./Containers/NotFound";
-import AppliedRoute from "./Components/AppliedRoute";
+import Activity from "./Containers/Activity";
 
+
+
+import AppliedRoute from "./Components/AppliedRoute";
+import AuthenticatedRoute from "./Components/AuthenticatedRoute";
+import AdminRoute from "./Components/AdminRoute";
+import UnauthenticatedRoute from "./Components/UnauthenticatedRoute";
+
+import NotFound from "./Containers/NotFound";
 
 export default ( {childProps}) =>
     <Switch>
 
         <AppliedRoute path="/" exact component={Home} props={childProps} />
-        <AppliedRoute path="/login" exact component={Login} props={childProps} />
-        <AppliedRoute path="/signup" exact component={Signup} props={childProps} />
-        <AppliedRoute path="/activities/new" exact component={AddActivity} props={childProps} />
+        <UnauthenticatedRoute path="/login" exact component={Login} props={childProps} />
+        <UnauthenticatedRoute path="/signup" exact component={Signup} props={childProps} />
+
+        <AuthenticatedRoute path="/activity/:id" exact component={Activity} props={childProps} />
+        <AuthenticatedRoute path="/categories" exact component={Categories} props={childProps} />
+
+        <AdminRoute path="/activity/new" exact component={AddActivity} props={childProps} />
+
+        <AdminRoute path="/rooms" exact component={Rooms} props={childProps} />
+
+        <AdminRoute path="/admin" exact component={Admin} props={childProps} />
+
 
 
         <Route component={NotFound} />
+
     </Switch>;

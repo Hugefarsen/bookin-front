@@ -1,21 +1,20 @@
 import React, { Component, Fragment } from "react";
-import $ from 'jquery';
 import { Link, withRouter } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
 
-import Activities from "./Components/Activities";
-
 import './App.css';
 import './DateTime.css';
 
 class App extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
+
         this.state = {
             isAuthenticated: false,
             isAuthenticating: true,
+            isAdmin: false,
             activities: [],
             user: {},
         }
@@ -23,39 +22,35 @@ class App extends Component {
 
     userHasAuthenticated = authenticated => {
         this.setState({ isAuthenticated: authenticated });
-    }
+    };
+
+    userIsAdmin = admin => {
+        this.setState({ isAdmin: admin });
+    };
 
     handleLogout = event => {
         this.userHasAuthenticated(false);
-        this.setState({user: {}})
+        this.setState({user: {}});
+        this.setState({isAdmin: false});
         localStorage.setItem('user', "");
         this.props.history.push("/login");
-
     };
 
-    getActivities(){
-        $.ajax({
-            url: 'http://localhost:8888/bookin-api/public/api/activity',
-            dataType: 'json',
-            data: {'Authorization' : 'Bearer'+this.state.user.token},
-            cache: false,
-            success: function(data){
-                this.setState({activities: data.data}, function(){
-                  //  console.log(this.state);
-                  //  console.log(this.state.activities);
-                })
-            }.bind(this),
-            error: function(xhr, status, err){
-                //console.log(err);
-            }
-        })
-    }
+    userInfo = user => {
+        this.setState({user: user })
+    };
 
     getLoggedUser(){
         if(localStorage.getItem('user')){
             let user = JSON.parse(localStorage.getItem('user'))
-            if (user.token){
+            if (user){
                 this.setState({user : user})
+                var i;
+                for (i = 0; i < user.role.length; i++) {
+                    if(user.role[i].role === 'Admin'){
+                        this.userIsAdmin(true);
+                    }
+                }
                 this.userHasAuthenticated(true);
             }
         }
@@ -64,20 +59,20 @@ class App extends Component {
 
     componentWillMount(){
         this.getLoggedUser();
-        //this.getActivities();
     }
 
     componentDidMount(){
         this.getLoggedUser();
-       // this.getActivities();
-
     }
 
     render() {
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
+            isAdmin: this.state.isAdmin,
             userHasAuthenticated: this.userHasAuthenticated,
-            user: this.state.user,
+            userIsAdmin: this.userIsAdmin,
+            userLog: this.userInfo,
+            user: this.state.user
         };
 
         return (
@@ -107,14 +102,9 @@ class App extends Component {
                 </Navbar>
                 <Routes childProps={childProps} />
 
-                <div className="Main">
-                    <Activities activities={this.state.activities} />
-                    <hr />
-                </div>
             </div>
         );
     }
 }
 
 export default withRouter(App);
-;

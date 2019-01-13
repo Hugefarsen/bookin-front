@@ -23,38 +23,46 @@ class Login extends Component {
         this.setState({
             [event.target.id]: event.target.value
         });
-    }
+    };
 
     handleSubmit = async event => {
         event.preventDefault();
-
         this.setState({ isLoading: true });
 
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/login',
-            dataType: 'json',
-            data: {
-                'email': this.state.email,
-                'password': this.state.password
-            },
-            cache: false,
-            success: function(data){
-                this.props.userHasAuthenticated(true);
-                console.log(data);
-                this.setState( {userToken : data.success.token}, function(){
-                    this.setState({password: ""});
-                    localStorage.setItem('user', JSON.stringify(data.success));
-                    this.setState({ isLoading: false });
-                    this.props.history.push("/")
-                })
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.log(err);
-            }
-        });
-
-
+        try {
+            await $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8888/bookin-api/public/api/login',
+                dataType: 'json',
+                data: {
+                    'email': this.state.email,
+                    'password': this.state.password
+                },
+                cache: false,
+                success: function(data){
+                    console.log(data);
+                    let user = data.success;
+                    user['token'] = data.token;
+                    this.props.userLog(user);
+                    this.setState( { password: "", isLoading: false}, function(){
+                        localStorage.setItem('user', JSON.stringify(user));
+                    });
+                    var i;
+                    for (i = 0; i < user.role.length; i++) {
+                        console.log(user.role[i].role);
+                        if(user.role[i].role === 'Admin'){
+                            this.props.userIsAdmin(true);
+                        }
+                    }
+                    this.props.userHasAuthenticated(true);
+                }.bind(this),
+                error: function(xhr, status, err){
+                    console.log(err);
+                }
+            });
+        } catch (e) {
+            alert(e.message);
+        }
     };
 
     render() {
