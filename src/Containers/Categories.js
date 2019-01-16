@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import {FormGroup, FormControl, ControlLabel, ListGroupItem} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
 import $ from "jquery";
+import {LinkContainer} from "react-router-bootstrap";
 
 export default class Categories extends Component {
     constructor(props) {
@@ -9,11 +10,13 @@ export default class Categories extends Component {
 
         this.state = {
             categories: {},
-            selectedRoom: "",
-            rooms: "",
+            categoryName: "",
+            categoryDescription: "",
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.renderCategoriesList = this.renderCategoriesList;
+
     }
 
     validateForm() {
@@ -27,30 +30,26 @@ export default class Categories extends Component {
         });
     }
 
-    handleSubmit = async event => {
+    createCategory = async event => {
         event.preventDefault();
 
         this.setState({ isLoading: true });
 
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/activity',
+            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
             },
             data: {
-                'room_id': this.state.selectedRoom,
-                'start': this.state.startDate,
-                'end': this.state.endDate,
-                'category_id': this.state.selectedCategory
+                'name': this.state.categoryName,
+                'description': this.state.categoryDescription,
             },
             cache: false,
             success: function(data){
-                console.log(data);
+                this.state.categories.push(data.data);
                 this.setState({ isLoading: false });
-
-
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
@@ -68,13 +67,8 @@ export default class Categories extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data)
-                let optionItems = data.data.map((category) =>
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                );
-                this.setState({categories: optionItems});
-                console.log(this.state.categories)
-
+                this.setState({categories: data.data}, function () {
+                });
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
@@ -82,24 +76,46 @@ export default class Categories extends Component {
         });
     };
 
-    componentDidMount() {
+    renderCategoriesList(categories) {
+        return [{}].concat(categories).map(
+            (category, i) => i !== 0
+                ? <LinkContainer
+                    key={category.id + category.id}
+                    to={`/category/${category.id}`}
+                >
+                    <ListGroupItem header={category.name}>
+                        {"Beskrivning: " + category.description}
+
+                    </ListGroupItem>
+                </LinkContainer>
+                : null
+        )
+    }
+
+    componentWillMount() {
         this.getCategories();
     }
 
     render() {
         return (
-            <div className="AddActivity">
-                <form onSubmit={this.handleSubmit}>
+            <div className="categories">
+                <h1>Kategorier</h1>
+                <div className="addCategory">
+                    <h2>Skapa ny kategori</h2>
+                <form onSubmit={this.createCategory}>
 
                     <FormGroup controlId="formControlsSelect">
-                        <ControlLabel>Room</ControlLabel>
-                        <FormControl componentClass="select"
-                                     placeholder="select"
-                                     onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
-                            <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
-                                Välj rum
-                            </option>
-                            {this.state.rooms}
+                        <ControlLabel>Namn</ControlLabel>
+                        <FormControl
+                            placeholder="Namn"
+                            onChange={(e) => this.setState({ categoryName: e.target.value })}>
+                        </FormControl>
+                    </FormGroup>
+                    <FormGroup controlId="formControlsSelect">
+                        <ControlLabel>Beskrivning</ControlLabel>
+                        <FormControl
+                            placeholder="Beskrivning"
+                            onChange={(e) => this.setState({ categoryDescription: e.target.value })}>
                         </FormControl>
                     </FormGroup>
 
@@ -115,7 +131,11 @@ export default class Categories extends Component {
                                   loadingText="Creating…"
                     />
                 </form>
-            </div>
-        );
+                </div>
+                <div className="categories">
+                    <h3>Tillgängliga kategorier</h3>
+                        {this.renderCategoriesList(this.state.categories)}
+                </div>
+            </div>);
     }
 }

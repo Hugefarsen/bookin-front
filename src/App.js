@@ -18,6 +18,8 @@ class App extends Component {
             activities: [],
             user: {},
         }
+
+        this.renderLinks = this.renderLinks
     }
 
     userHasAuthenticated = authenticated => {
@@ -45,12 +47,13 @@ class App extends Component {
             let user = JSON.parse(localStorage.getItem('user'))
             if (user){
                 this.setState({user : user})
-                var i;
+                let i;
                 for (i = 0; i < user.role.length; i++) {
                     if(user.role[i].role === 'Admin'){
                         this.userIsAdmin(true);
                     }
                 }
+
                 this.userHasAuthenticated(true);
             }
         }
@@ -63,6 +66,35 @@ class App extends Component {
 
     componentDidMount(){
         this.getLoggedUser();
+    }
+
+    renderLinks(){
+        return (
+            this.state.isAdmin ?
+                <Fragment>
+                    <LinkContainer to="/admin">
+                        <NavItem>Admin settings</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/categories">
+                        <NavItem>Categories</NavItem>
+                    </LinkContainer>
+
+                    <LinkContainer to="/home">
+                        <NavItem>Your bookings</NavItem>
+                    </LinkContainer>
+                        <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                    </Fragment>
+                    :
+                <Fragment>
+                    <LinkContainer to="/categories">
+                        <NavItem>Categories</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/">
+                        <NavItem>Your bookings</NavItem>
+                    </LinkContainer>
+                    <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                </Fragment>
+        )
     }
 
     render() {
@@ -87,7 +119,7 @@ class App extends Component {
                     <Navbar.Collapse>
                         <Nav pullRight>
                             {this.state.isAuthenticated
-                                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                                ?  this.renderLinks()
                                 : <Fragment>
                                     <LinkContainer to="/signup">
                                         <NavItem>Signup</NavItem>
@@ -101,7 +133,6 @@ class App extends Component {
                     </Navbar.Collapse>
                 </Navbar>
                 <Routes childProps={childProps} />
-
             </div>
         );
     }

@@ -49,12 +49,13 @@ class Login extends Component {
                     });
                     var i;
                     for (i = 0; i < user.role.length; i++) {
-                        console.log(user.role[i].role);
                         if(user.role[i].role === 'Admin'){
                             this.props.userIsAdmin(true);
+
                         }
                     }
                     this.props.userHasAuthenticated(true);
+                    this.props.history.push("/");
                 }.bind(this),
                 error: function(xhr, status, err){
                     console.log(err);

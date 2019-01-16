@@ -21,9 +21,10 @@ export default class Home extends Component {
     }
 
     getActivities(){
-        if (this.props.user) {
+        if (this.props.isAuthenticated) {
+            console.log(this.props.user);
             $.ajax({
-                url: 'http://localhost:8888/bookin-api/public/api/activity',
+                url: 'http://localhost:8888/bookin-api/public/api/user/' + this.props.user.id,
                 dataType: 'json',
                 headers: {
                     'Authorization': 'Bearer ' + this.props.user.token,
@@ -31,7 +32,7 @@ export default class Home extends Component {
                 cache: false,
                 success: function(data){
                     console.log(data.data);
-                    this.setState({activities: data.data}, function(){
+                    this.setState({activities: data.data.goesToActivity}, function(){
                     });
                 }.bind(this),
                 error: function(xhr, status, err){
@@ -42,55 +43,27 @@ export default class Home extends Component {
     }
 
     renderActivitesList(activities) {
-        return [{}].concat(activities).map(
-            (activity, i) => i !== 0
-                ? <LinkContainer
-                    key={activity.id}
-                    to={`/activity/${activity.id}`}
-                >
-                    <ListGroupItem header={activity.categories.name.trim().split("\n")[0]}>
-                        {"Start: " + new Date(activity.start).toLocaleString()}
-                        <br/>
-                        {"End: " + new Date(activity.end).toLocaleString()}
-                        <br/>
-                        {"Room: " + activity.room.name}
-
-                    </ListGroupItem>
-                </LinkContainer>
-                : null
-        )
+        return activities.map((row) => {
+            return <LinkContainer
+                key={row.id}
+                to={`/activity/${row.id}`}>
+                <ListGroupItem header={row.category.name}>
+                    {"Start: " + new Date(row.start).toLocaleString()}
+                    <br/>
+                    {"End: " + new Date(row.end).toLocaleString()}
+                    <br/>
+                    {"Room: " + row.room.name}
+                </ListGroupItem>
+            </LinkContainer>
+        })
     }
 
-
-    renderCreateActivity(){
-        return <LinkContainer
-            key="new"
-            to="/activity/new"
-        >
-            <ListGroupItem>
-                <h4>
-                    <b>{"\uFF0B"}</b> Create a new activity
-                </h4>
-            </ListGroupItem>
-        </LinkContainer>
-    }
-
-
-    renderLander() {
-        return (
-            <div className="lander">
-                <h1>Bookin</h1>
-                <p>A simple booking app</p>
-            </div>
-        );
-    }
 
     renderActivities() {
         return (
             <div className="activities">
                 <PageHeader>Your Activities</PageHeader>
                 <ListGroup>
-                    {this.props.isAdmin && this.renderCreateActivity()}
                     {this.renderActivitesList(this.state.activities)}
                 </ListGroup>
             </div>
@@ -100,7 +73,7 @@ export default class Home extends Component {
     render() {
         return (
             <div className="Home">
-                {this.props.isAuthenticated ? this.renderActivities() : this.renderLander()}
+                {this.renderActivities()}
                 </div>
         );
     }

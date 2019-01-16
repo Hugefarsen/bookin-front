@@ -46,7 +46,8 @@ export default class Signup extends Component {
                 'name': this.state.name,
                 'email': this.state.email,
                 'password': this.state.password,
-                'c_password': this.state.confirmPassword
+                'c_password': this.state.confirmPassword,
+                'roles': {'3' : 'User'},
             },
             cache: false,
             success: function(data){
@@ -55,6 +56,7 @@ export default class Signup extends Component {
                     localStorage.setItem('user', JSON.stringify(data.success));
                     })
                 this.props.userHasAuthenticated(true);
+
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);

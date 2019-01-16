@@ -81,39 +81,115 @@ export default class Rooms extends Component {
         });
     };
 
+    getProperties(){
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8888/bookin-api/public/api/roomproperty',
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(data){
+                let optionItems = data.data.map((category) =>
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                );
+                this.setState({rooms: optionItems});
+                console.log(data);
+
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    };
+
     componentDidMount() {
         this.getRooms();
+        this.getProperties();
     }
 
     render() {
         return (
-            <div className="AddActivity">
-                <form onSubmit={this.handleSubmit}>
+            <div className="Rooms">
+                <div className="Edit">
+                    <form onSubmit={this.handleSubmit}>
 
-                    <FormGroup controlId="formControlsSelect">
-                        <ControlLabel>Room</ControlLabel>
-                        <FormControl componentClass="select"
-                                     placeholder="select"
-                                     onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
-                            <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
-                                Välj rum
-                            </option>
-                            {this.state.rooms}
-                        </FormControl>
-                    </FormGroup>
+                        <FormGroup controlId="formControlsSelect">
+                            <ControlLabel>Room</ControlLabel>
+                            <FormControl componentClass="select"
+                                         placeholder="select"
+                                         onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
+                                <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
+                                    Välj rum
+                                </option>
+                                {this.state.rooms}
+                            </FormControl>
+                        </FormGroup>
 
+                        <LoaderButton block
+                                      bsStyle="primary"
+                                      bsSize="large"
+                            //    disabled={!this.validateForm()}
+                                      type="submit"
+                                      isLoading={this.state.isLoading}
+                                      text="Edit"
+                                      loadingText="Creating…"
+                        />
+                    </form>
+                </div>
+                <div className="createRoom">
+                    <form onSubmit={this.handleSubmit}>
 
+                        <FormGroup controlId="formControlsSelect">
+                            <ControlLabel>Room</ControlLabel>
+                            <FormControl componentClass="select"
+                                         placeholder="select"
+                                         onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
+                                <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
+                                    Välj rum
+                                </option>
+                                {this.state.rooms}
+                            </FormControl>
+                        </FormGroup>
 
-                    <LoaderButton block
-                                  bsStyle="primary"
-                                  bsSize="large"
-                        //    disabled={!this.validateForm()}
-                                  type="submit"
-                                  isLoading={this.state.isLoading}
-                                  text="Create"
-                                  loadingText="Creating…"
-                    />
-                </form>
+                        <LoaderButton block
+                                      bsStyle="primary"
+                                      bsSize="large"
+                            //    disabled={!this.validateForm()}
+                                      type="submit"
+                                      isLoading={this.state.isLoading}
+                                      text="Edit"
+                                      loadingText="Creating…"
+                        />
+                    </form>
+                </div>
+                <div className="createProperty">
+                    <form onSubmit={this.handleSubmit}>
+
+                        <FormGroup controlId="formControlsSelect">
+                            <ControlLabel>Room</ControlLabel>
+                            <FormControl componentClass="select"
+                                         placeholder="select"
+                                         onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
+                                <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
+                                    Välj rum
+                                </option>
+                                {this.state.rooms}
+                            </FormControl>
+                        </FormGroup>
+
+                        <LoaderButton block
+                                      bsStyle="primary"
+                                      bsSize="large"
+                            //    disabled={!this.validateForm()}
+                                      type="submit"
+                                      isLoading={this.state.isLoading}
+                                      text="Edit"
+                                      loadingText="Creating…"
+                        />
+                    </form>
+                </div>
             </div>
         );
     }
