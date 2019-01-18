@@ -15,6 +15,7 @@ class App extends Component {
             isAuthenticated: false,
             isAuthenticating: true,
             isAdmin: false,
+            isSupervisor: false,
             activities: [],
             user: {},
         }
@@ -30,12 +31,16 @@ class App extends Component {
         this.setState({ isAdmin: admin });
     };
 
+    userIsSupervisor = supervisor => {
+        this.setState({ isSupervisor: supervisor });
+    };
+
     handleLogout = event => {
         this.userHasAuthenticated(false);
         this.setState({user: {}});
         this.setState({isAdmin: false});
         localStorage.setItem('user', "");
-        this.props.history.push("/login");
+        this.props.history.push("/");
     };
 
     userInfo = user => {
@@ -52,8 +57,10 @@ class App extends Component {
                     if(user.role[i].role === 'Admin'){
                         this.userIsAdmin(true);
                     }
+                    if(user.role[i].role === 'Supervisor'){
+                        this.userIsSupervisor(true);
+                    }
                 }
-
                 this.userHasAuthenticated(true);
             }
         }
@@ -68,33 +75,53 @@ class App extends Component {
         this.getLoggedUser();
     }
 
-    renderLinks(){
-        return (
-            this.state.isAdmin ?
+    renderAdminLinks(){
+        if(this.state.isAdmin){
+            return (
                 <Fragment>
                     <LinkContainer to="/admin">
                         <NavItem>Admin settings</NavItem>
                     </LinkContainer>
-                    <LinkContainer to="/categories">
-                        <NavItem>Categories</NavItem>
-                    </LinkContainer>
+                </Fragment>
+            )
+        }
+    }
 
-                    <LinkContainer to="/home">
-                        <NavItem>Your bookings</NavItem>
+    renderSupervisorLinks(){
+        if (this.state.isSupervisor) {
+            return (
+                <Fragment>
+                    <LinkContainer to="/activity/new">
+                        <NavItem>Add Activity</NavItem>
                     </LinkContainer>
-                        <NavItem onClick={this.handleLogout}>Logout</NavItem>
-                    </Fragment>
-                    :
+                </Fragment>
+            )
+        }
+    }
+
+    renderUserLinks(){
+        if(this.state.isAuthenticated){
+            return (
                 <Fragment>
                     <LinkContainer to="/categories">
                         <NavItem>Categories</NavItem>
                     </LinkContainer>
-                    <LinkContainer to="/">
+                    <LinkContainer to="/home">
                         <NavItem>Your bookings</NavItem>
                     </LinkContainer>
                     <NavItem onClick={this.handleLogout}>Logout</NavItem>
                 </Fragment>
-        )
+            )
+        } else {
+            return <Fragment>
+                <LinkContainer to="/signup">
+                    <NavItem>Sign up</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/login">
+                    <NavItem>Log in</NavItem>
+                </LinkContainer>
+            </Fragment>
+        }
     }
 
     render() {
@@ -103,6 +130,7 @@ class App extends Component {
             isAdmin: this.state.isAdmin,
             userHasAuthenticated: this.userHasAuthenticated,
             userIsAdmin: this.userIsAdmin,
+            userIsSupervisor: this.userIsSupervisor,
             userLog: this.userInfo,
             user: this.state.user
         };
@@ -118,17 +146,9 @@ class App extends Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav pullRight>
-                            {this.state.isAuthenticated
-                                ?  this.renderLinks()
-                                : <Fragment>
-                                    <LinkContainer to="/signup">
-                                        <NavItem>Signup</NavItem>
-                                    </LinkContainer>
-                                    <LinkContainer to="/login">
-                                        <NavItem>Login</NavItem>
-                                    </LinkContainer>
-                                </Fragment>
-                            }
+                            {this.renderAdminLinks()}
+                            {this.renderSupervisorLinks()}
+                            {this.renderUserLinks()}
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

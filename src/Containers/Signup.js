@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { HelpBlock, Form, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Form, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
 import "./Signup.css";
 import $ from "jquery";

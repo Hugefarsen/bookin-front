@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import {FormGroup, FormControl, ControlLabel, ListGroupItem} from "react-bootstrap";
-import LoaderButton from "../Components/LoaderButton";
+import {PageHeader, ListGroupItem} from "react-bootstrap";
 import $ from "jquery";
 import {LinkContainer} from "react-router-bootstrap";
 
@@ -9,13 +8,8 @@ export default class Categories extends Component {
         super(props);
 
         this.state = {
-            categories: {},
-            categoryName: "",
-            categoryDescription: "",
+            categories: [],
         };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.renderCategoriesList = this.renderCategoriesList;
 
     }
 
@@ -24,40 +18,8 @@ export default class Categories extends Component {
         //  return this.state.name.length > 0;
     }
 
-    handleChange = event => {
-        this.setState({
-            [event.target.id]: event.target.value
-        });
-    }
-
-    createCategory = async event => {
-        event.preventDefault();
-
-        this.setState({ isLoading: true });
-
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
-            dataType: 'json',
-            headers: {
-                'Authorization': 'Bearer ' + this.props.user.token,
-            },
-            data: {
-                'name': this.state.categoryName,
-                'description': this.state.categoryDescription,
-            },
-            cache: false,
-            success: function(data){
-                this.state.categories.push(data.data);
-                this.setState({ isLoading: false });
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.log(err);
-            }
-        });
-    };
-
     getCategories(){
+        console.log(this);
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
@@ -77,19 +39,17 @@ export default class Categories extends Component {
     };
 
     renderCategoriesList(categories) {
-        return [{}].concat(categories).map(
-            (category, i) => i !== 0
-                ? <LinkContainer
-                    key={category.id + category.id}
-                    to={`/category/${category.id}`}
-                >
-                    <ListGroupItem header={category.name}>
-                        {"Beskrivning: " + category.description}
+        return categories.map((row) => {
+            return <LinkContainer
+                key={row.id}
+                to={`/category/${row.id}`}
+            >
+                <ListGroupItem header={row.name}>
+                    {"Beskrivning: " + row.description}
 
-                    </ListGroupItem>
-                </LinkContainer>
-                : null
-        )
+                </ListGroupItem>
+            </LinkContainer>
+        })
     }
 
     componentWillMount() {
@@ -99,41 +59,9 @@ export default class Categories extends Component {
     render() {
         return (
             <div className="categories">
-                <h1>Kategorier</h1>
-                <div className="addCategory">
-                    <h2>Skapa ny kategori</h2>
-                <form onSubmit={this.createCategory}>
 
-                    <FormGroup controlId="formControlsSelect">
-                        <ControlLabel>Namn</ControlLabel>
-                        <FormControl
-                            placeholder="Namn"
-                            onChange={(e) => this.setState({ categoryName: e.target.value })}>
-                        </FormControl>
-                    </FormGroup>
-                    <FormGroup controlId="formControlsSelect">
-                        <ControlLabel>Beskrivning</ControlLabel>
-                        <FormControl
-                            placeholder="Beskrivning"
-                            onChange={(e) => this.setState({ categoryDescription: e.target.value })}>
-                        </FormControl>
-                    </FormGroup>
-
-
-
-                    <LoaderButton block
-                                  bsStyle="primary"
-                                  bsSize="large"
-                        //    disabled={!this.validateForm()}
-                                  type="submit"
-                                  isLoading={this.state.isLoading}
-                                  text="Create"
-                                  loadingText="Creating…"
-                    />
-                </form>
-                </div>
                 <div className="categories">
-                    <h3>Tillgängliga kategorier</h3>
+                    <PageHeader>Tillgängliga kategorier</PageHeader>
                         {this.renderCategoriesList(this.state.categories)}
                 </div>
             </div>);

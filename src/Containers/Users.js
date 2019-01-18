@@ -68,16 +68,12 @@ export default class Users extends Component {
             },
             cache: false,
             success: function(data){
-
                 console.log(data);
-
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
             }
         });
-
-
     };
 
     componentDidMount() {
@@ -100,8 +96,6 @@ export default class Users extends Component {
                             {this.state.rooms}
                         </FormControl>
                     </FormGroup>
-
-
 
                     <LoaderButton block
                                   bsStyle="primary"
