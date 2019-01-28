@@ -12,8 +12,6 @@ import Category from "./Containers/Category";
 import Categories from "./Containers/Categories";
 import User from "./Containers/User"
 
-import AddActivity from "./Containers/AddActivity";
-
 import Activity from "./Containers/Activity";
 
 
@@ -33,7 +31,6 @@ export default ( {childProps}) =>
         <UnauthenticatedRoute path="/signup" exact component={Signup} props={childProps} />
 
         <AdminRoute path="/admin" exact component={Admin} props={childProps} />
-        <AdminRoute path="/activity/new" exact component={AddActivity} props={childProps} />
 
         <AuthenticatedRoute path="/home" exact component={Home} props={childProps} />
 

@@ -47,7 +47,6 @@ export default class Users extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 this.setState({ isLoading: false });
 
 
@@ -68,7 +67,6 @@ export default class Users extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);

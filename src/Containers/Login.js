@@ -40,7 +40,6 @@ class Login extends Component {
                 },
                 cache: false,
                 success: function(data){
-                    console.log(data);
                     let user = data.success;
                     user['token'] = data.token;
                     this.props.userLog(user);

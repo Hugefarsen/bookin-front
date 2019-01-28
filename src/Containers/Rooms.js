@@ -47,7 +47,6 @@ export default class Rooms extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 this.setState({ isLoading: false });
 
 
@@ -72,7 +71,6 @@ export default class Rooms extends Component {
                     <option key={category.id} value={category.id}>{category.name}</option>
                 );
                 this.setState({rooms: optionItems});
-                console.log(data);
 
             }.bind(this),
             error: function(xhr, status, err){
@@ -95,7 +93,6 @@ export default class Rooms extends Component {
                     <option key={category.id} value={category.id}>{category.name}</option>
                 );
                 this.setState({rooms: optionItems});
-                console.log(data);
 
             }.bind(this),
             error: function(xhr, status, err){

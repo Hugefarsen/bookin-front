@@ -26,7 +26,6 @@ export default class User extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 this.setState({user: data.data});
             }.bind(this),
             error: function(xhr, status, err){

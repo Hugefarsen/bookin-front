@@ -1,17 +1,19 @@
 import React, { Component } from "react";
 import { ControlLabel, ListGroupItem, PageHeader,ListGroup } from "react-bootstrap";
+import {LinkContainer} from "react-router-bootstrap";
 import "./Activity.css";
 
 import $ from "jquery";
 
-import {LinkContainer} from "react-router-bootstrap";
 
 export default class Activity extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            activity: {},
+            activity: {
+                owner: []
+            },
             category: {},
             users: [],
             room: {}
@@ -25,6 +27,7 @@ export default class Activity extends Component {
     }
 
     getActivity() {
+        let that = this;
         $.ajax({
             url: 'http://localhost:8888/bookin-api/public/api/activity/' + this.props.match.params.id,
             dataType: 'json',
@@ -41,8 +44,18 @@ export default class Activity extends Component {
                 });
             }.bind(this),
             error: function(xhr, status, err){
-                console.log(err);
+                if(err === "Not Found"){
+                    alert('Aktiviteten hittades inte');
+                    that.props.history.goBack()
+                }
             }
+
+        })
+    }
+
+    renderActivityOwner(owner){
+        return owner.map((row) => {
+            return (" " + row.name)
         })
     }
 
@@ -71,6 +84,9 @@ export default class Activity extends Component {
     render() {
         return <div className="Activity">
             <PageHeader>{this.state.category.name}</PageHeader>
+            <ControlLabel>Ledare</ControlLabel>
+            <p>{this.renderActivityOwner(this.state.activity.owner)}</p>
+
             <ControlLabel>Start tid</ControlLabel>
             <p>{this.state.activity.start}</p>
             <ControlLabel>Slut tid</ControlLabel>

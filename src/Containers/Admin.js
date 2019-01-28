@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import $ from "jquery";
 import {LinkContainer} from "react-router-bootstrap";
-import {ControlLabel, FormControl, FormGroup, ListGroupItem, PageHeader, PanelGroup, Panel} from "react-bootstrap";
+import {ControlLabel, FormControl, FormGroup, Glyphicon, ListGroupItem, PageHeader, PanelGroup, Panel, Button} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
+import Moment from "moment";
+import DateTime from "react-datetime";
+import $ from "jquery";
 
 export default class Admin extends Component {
     constructor(props) {
@@ -14,23 +16,27 @@ export default class Admin extends Component {
             users: [],
             rooms: [],
             isLoading: false,
+            startDate: "",
+            endDate: "",
+            selectedCategory: "",
+            selectedRoom: "",
+            activities: [],
+            roomsOptions: []
 
         };
 
+        this.handleDeleteUser = this.handleDeleteUser.bind(this);
+
         this.renderUsersList = this.renderUsersList;
-        this.handleChange = this.handleChange.bind(this);
     }
 
     componentWillMount() {
         this.getUsers();
         this.getCategories();
         this.getRooms();
-    }
-
-    handleChange = event => {
-        this.setState({
-            [event.target.id]: event.target.value
-        });
+        this.getActivities();
+        this.getCategoriesOptions();
+        this.getRoomsOptions();
     }
 
 
@@ -80,15 +86,70 @@ export default class Admin extends Component {
         });
     };
 
+    getCategoriesOptions(){
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(data){
+                let optionItems = data.data.map((category) =>
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                );
+                this.setState({categoriesOptions: optionItems});
+
+
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    };
+
+
+    handleDeleteCategory(e) {
+        e.preventDefault();
+
+        let targetId = e.target.id;
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8888/bookin-api/public/api/activitycategory/' + e.target.id,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(){
+                if (window.confirm("Är du säker du vill ta bort denna kategori?")) {
+                    let categories = this.state.categories;
+                    for (let i = 0; i < categories.length; i++) {
+                        if (parseInt(targetId) === parseInt(categories[i].id)) {
+                            categories.splice(i, 1);
+                            this.setState({categories: categories})
+                        }
+                    }
+                }
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    }
+
     renderCategoriesList(categories) {
         return categories.map((row) => {
             return <LinkContainer
                     key={row.id}
                     to={`/category/${row.id}`}
+                    className="row"
                 >
                     <ListGroupItem header={row.name}>
                         {"Beskrivning: " + row.description}
-
+                        <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteCategory(e)}>Ta bort <Glyphicon glyph="trash" />
+                        </Button>
                     </ListGroupItem>
                 </LinkContainer>
         })
@@ -141,11 +202,41 @@ export default class Admin extends Component {
         });
     }
 
+    handleDeleteRoom(e){
+        e.preventDefault();
+
+        let targetId = e.target.id;
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8888/bookin-api/public/api/room/' + e.target.id,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(){
+                if (window.confirm("Är du säker du vill ta bort detta rum?")) {
+                    let rooms = this.state.rooms;
+                    for (let i = 0; i < rooms.length; i++) {
+                        if (parseInt(targetId) === parseInt(rooms[i].id)) {
+                            rooms.splice(i, 1);
+                            this.setState({rooms: rooms})
+                        }
+                    }
+                }
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    }
+
     renderRoomsList(rooms) {
         return rooms.map((row) => {
             return <LinkContainer
                 key={row.id}
                 to={`/user/${row.id}`}
+                className="row"
             >
                 <ListGroupItem header={row.name}>
                     {"Id: " + row.id}
@@ -153,7 +244,8 @@ export default class Admin extends Component {
                     {"Beskrivning: " + row.description}
                     <br />
                     {"Storlek: " + row.size}
-
+                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteRoom(e)}>Ta bort <Glyphicon glyph="trash" />
+                    </Button>
                 </ListGroupItem>
             </LinkContainer>
         })
@@ -169,9 +261,37 @@ export default class Admin extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 this.setState({users: data.data}, function(){
                 });
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    }
+
+    handleDeleteUser(e){
+        e.preventDefault();
+
+        let targetId = e.target.id;
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8888/bookin-api/public/api/user/' + e.target.id,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(){
+                if (window.confirm("Är du säker du vill ta bort användaren?")) {
+                    let users = this.state.users;
+                    for (let i = 0; i < users.length; i++) {
+                        if (parseInt(targetId) === parseInt(users[i].id)) {
+                            users.splice(i, 1);
+                            this.setState({users: users})
+                        }
+                    }
+                }
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
@@ -190,6 +310,7 @@ export default class Admin extends Component {
             return <LinkContainer
                 key={row.id}
                 to={`/user/${row.id}`}
+                className="row"
             >
                 <ListGroupItem header={row.name}>
                     {"Id: " + row.id}
@@ -197,10 +318,149 @@ export default class Admin extends Component {
                     {"Email: " + row.email}
                     <br />
                     {"Roles:" + this.renderUserRoles(row.role)}
+                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteUser(e)}>Ta bort <Glyphicon glyph="trash" />
+                    </Button>
                 </ListGroupItem>
             </LinkContainer>
         })
     }
+
+    renderActivityOwner(owner){
+        return owner.map((row) => {
+            return (" " + row.name)
+        })
+    }
+
+    getActivities(){
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8888/bookin-api/public/api/activity',
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(data){
+                this.setState({activities: data.data}, function(){
+                });
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    }
+
+    renderActivitiesList(activities){
+        console.log(activities);
+
+        return activities.map((row) => {
+            return <LinkContainer
+                key={row.id}
+                to={`/activity/${row.id}`}
+                className="row"
+            >
+                <ListGroupItem header={row.category.name}>
+                    {"Ledare: " + this.renderActivityOwner(row.owner)}
+                    <br />
+                    {"Start: " + row.start}
+                    <br />
+                    {"Slut: " + row.end}
+                    <br />
+                    {"Rum: " + row.room.name}
+                    <br />
+                    {"Bokade: " + row.users.length + "/" + row.room.size}
+                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteActivity(e)}>Ta bort <Glyphicon glyph="trash" />
+                    </Button>
+                </ListGroupItem>
+            </LinkContainer>
+        })
+
+    }
+
+    handleDeleteActivity(e){
+        e.preventDefault();
+
+        let targetId = e.target.id;
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8888/bookin-api/public/api/activity/' + e.target.id,
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            cache: false,
+            success: function(){
+                if (window.confirm("Är du säker du vill ta bort aktiviteten?")) {
+                    let activities = this.state.activities;
+                    for (let i = 0; i < activities.length; i++) {
+                        if (parseInt(targetId) === parseInt(activities[i].id)) {
+                            activities.splice(i, 1);
+                            this.setState({activities: activities})
+                        }
+                    }
+                }
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log(err);
+            }
+        });
+    }
+
+    handleStartDate(date){
+        let dateToInsert = new Moment(date).format("YYYY-MM-DD HH:mm:ss");
+        let endDate = new Moment(date).add(1, 'hours').format("YYYY-MM-DD HH:mm:ss");
+        this.setState({startDate : dateToInsert, endDate: endDate});
+    };
+
+    handleEndDate(date){
+        let dateToInsert = new Moment(date).format("YYYY-MM-DD HH:mm:ss");
+        this.setState({endDate : dateToInsert});
+    };
+
+    createActivity = async event => {
+        event.preventDefault();
+        let that = this;
+
+        this.setState({ isLoading: true });
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8888/bookin-api/public/api/activity',
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + this.props.user.token,
+            },
+            data: {
+                'room_id': this.state.selectedRoom,
+                'start': this.state.startDate,
+                'end': this.state.endDate,
+                'category_id': this.state.selectedCategory,
+                'owner': this.props.user.id
+            },
+            cache: false,
+            success: function(data){
+                console.log(data);
+                that.state.activities.push(data.data);
+                that.setState({ isLoading: false });
+            },
+            error: function(xhr, status, err){
+                console.log(err);
+                if(xhr.responseText) {
+                    let responseTxt = JSON.parse(xhr.responseText);
+                    alert('Rummet är tyvärr bokat mellan ' + responseTxt.prebooked[0].start + ' och ' + responseTxt.prebooked[0].end);
+                    that.setState({isLoading: false});
+                }
+            }
+        });
+
+    };
+
+    getRoomsOptions(options){
+        console.log(options)
+        return options.map((row) => {
+            return <option key={row.id} value={row.id}>{row.name}</option>
+            }
+        );
+    };
 
     render() {
         return (
@@ -240,12 +500,12 @@ export default class Admin extends Component {
                                         //    disabled={!this.validateForm()}
                                                   type="submit"
                                                   isLoading={this.state.isLoading}
-                                                  text="Create"
-                                                  loadingText="Creating…"
+                                                  text="Skapa"
+                                                  loadingText="Skapar…"
                                     />
                                 </form>
                                 <div className="categorylist">
-                                    <h3>Tillgängliga kategorier</h3>
+                                    <h3>Redigera kategori</h3>
                                     {this.renderCategoriesList(this.state.categories)}
                                 </div>
                             </Panel.Body>
@@ -290,12 +550,12 @@ export default class Admin extends Component {
                                         //    disabled={!this.validateForm()}
                                                   type="submit"
                                                   isLoading={this.state.isLoading}
-                                                  text="Create"
-                                                  loadingText="Creating…"
+                                                  text="Skapa"
+                                                  loadingText="Skapar…"
                                     />
                                 </form>
                                 <div className="categorylist">
-                                    <h3>Tillgängliga rum</h3>
+                                    <h3>Redigera rum</h3>
                                     {this.renderRoomsList(this.state.rooms)}
                                 </div>
                             </Panel.Body>
@@ -317,17 +577,75 @@ export default class Admin extends Component {
                         </Panel.Collapse>
                     </Panel>
 
+                    <Panel eventKey="4" id="activities">
+                        <Panel.Heading>
+                            <Panel.Title toggle>
+                                Aktiviteter
+                            </Panel.Title>
+                        </Panel.Heading>
+                        <Panel.Collapse>
+                            <Panel.Body>
+                                <h3>Lägg till aktivitet</h3>
+                                <div className="AddActivity">
+                                    <form onSubmit={this.createActivity}>
+                                        <FormGroup controlId="formControlsSelect">
+                                            <ControlLabel>Kategori</ControlLabel>
+                                            <FormControl componentClass="select"
+                                                         placeholder="Kategori"
+                                                         onChange={(e) => this.setState({ selectedCategory: e.target.value })}>
+                                                <option value="" disabled={this.state.selectedCategory !== ""} defaultValue>
+                                                    Välj kategori
+                                                </option>
+                                                {this.state.categoriesOptions}
+                                            </FormControl>
+                                        </FormGroup>
+
+                                        <FormGroup controlId="formControlsSelect">
+                                            <ControlLabel>Rum</ControlLabel>
+                                            <FormControl componentClass="select"
+                                                         placeholder="Rum"
+                                                         onChange={(e) => this.setState({ selectedRoom: e.target.value })}>
+                                                <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
+                                                    Välj rum
+                                                </option>
+                                                {this.state.getRoomsOptions(this.state.roomsOptions)}
+                                            </FormControl>
+                                        </FormGroup>
+
+                                        <ControlLabel>Start tid</ControlLabel>
+                                        <DateTime onChange={this.handleStartDate.bind(this)}
+                                                  dateFormat='YYYY-MM-DD'
+                                                  timeFormat='HH:mm'
+                                                  value={this.state.startDate}
+                                        />
+
+                                        <ControlLabel>Slut tid</ControlLabel>
+                                        <DateTime onChange={this.handleEndDate.bind(this)}
+                                                  dateFormat='YYYY-MM-DD'
+                                                  timeFormat='HH:mm'
+                                                  value={this.state.endDate}
+                                        />
+
+                                        <LoaderButton block
+                                                      bsStyle="primary"
+                                                      bsSize="large"
+                                            //    disabled={!this.validateForm()}
+                                                      type="submit"
+                                                      isLoading={this.state.isLoading}
+                                                      text="Skapa"
+                                                      loadingText="Skapar…"
+                                        />
+                                    </form>
+                                    <div className="activitiesList">
+                                        <h3>Redigera aktivitet</h3>
+                                        {this.renderActivitiesList(this.state.activities)}
+                                    </div>
+                                </div>
+                            </Panel.Body>
+                        </Panel.Collapse>
+                    </Panel>
                 </PanelGroup>
             </div>
-/*
-
-            <div className="Home">
-                {this.renderCreateActivity()}
-                {this.renderCreateCategory()}
-                {this.renderCreateRoom()}
-                {this.renderUsersList(this.state.users)}
-            </div>
-            */
         );
     }
 };

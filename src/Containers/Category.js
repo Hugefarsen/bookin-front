@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { ListGroupItem, PageHeader, ListGroup} from "react-bootstrap";
+import {LinkContainer} from "react-router-bootstrap";
 
 import $ from "jquery";
-import {LinkContainer} from "react-router-bootstrap";
 
 export default class Activity extends Component {
     constructor(props) {
@@ -28,10 +28,8 @@ export default class Activity extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 this.setState({activities: data.data.activities, category: data.data}, function(){
                 });
-                console.log(this.state);
             }.bind(this),
             error: function(xhr, status, err){
                 console.log(err);
@@ -39,17 +37,26 @@ export default class Activity extends Component {
         })
     }
 
+    renderActivityOwner(owner){
+        return owner.map((row) => {
+            return (" " + row.name)
+        })
+    }
+
     renderActivitiesList(activities){
+        console.log(activities);
         return activities.map((row) => {
             return <LinkContainer
                 key={row.id}
                 to={`/activity/${row.id}`}>
                     <ListGroupItem header={"Start: " + new Date(row.start).toLocaleString()}>
-                        {"End: " + new Date(row.end).toLocaleString()}
+                        {"Slut: " + new Date(row.end).toLocaleString()}
                         <br/>
-                        {"Room: " + row.room.name}
+                        {"Rum: " + row.room.name}
                         <br/>
-                        {"Booked: " + row.users.length + " of " + row.room.size}
+                        {"Bokade: " + row.users.length + " of " + row.room.size}
+                        <br/>
+                        {"Ledare: " + this.renderActivityOwner(row.owner)}
                     </ListGroupItem>
             </LinkContainer>
         })

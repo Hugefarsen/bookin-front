@@ -19,8 +19,6 @@ class App extends Component {
             activities: [],
             user: {},
         }
-
-        this.renderLinks = this.renderLinks
     }
 
     userHasAuthenticated = authenticated => {
@@ -37,8 +35,7 @@ class App extends Component {
 
     handleLogout = event => {
         this.userHasAuthenticated(false);
-        this.setState({user: {}});
-        this.setState({isAdmin: false});
+        this.setState({user: {}, isAdmin: false, isSupervisor: false});
         localStorage.setItem('user', "");
         this.props.history.push("/");
     };
@@ -76,49 +73,38 @@ class App extends Component {
     }
 
     renderAdminLinks(){
-        if(this.state.isAdmin){
+        if(this.state.isAdmin || this.state.isSupervisor){
             return (
                 <Fragment>
                     <LinkContainer to="/admin">
-                        <NavItem>Admin settings</NavItem>
+                        <NavItem>Admin</NavItem>
                     </LinkContainer>
                 </Fragment>
             )
         }
     }
 
-    renderSupervisorLinks(){
-        if (this.state.isSupervisor) {
-            return (
-                <Fragment>
-                    <LinkContainer to="/activity/new">
-                        <NavItem>Add Activity</NavItem>
-                    </LinkContainer>
-                </Fragment>
-            )
-        }
-    }
 
     renderUserLinks(){
         if(this.state.isAuthenticated){
             return (
                 <Fragment>
                     <LinkContainer to="/categories">
-                        <NavItem>Categories</NavItem>
+                        <NavItem>Kategorier</NavItem>
                     </LinkContainer>
                     <LinkContainer to="/home">
-                        <NavItem>Your bookings</NavItem>
+                        <NavItem>Dina aktiviteter</NavItem>
                     </LinkContainer>
-                    <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                    <NavItem onClick={this.handleLogout}>Logga ut</NavItem>
                 </Fragment>
             )
         } else {
             return <Fragment>
                 <LinkContainer to="/signup">
-                    <NavItem>Sign up</NavItem>
+                    <NavItem>Registrera dig</NavItem>
                 </LinkContainer>
                 <LinkContainer to="/login">
-                    <NavItem>Log in</NavItem>
+                    <NavItem>Logga in</NavItem>
                 </LinkContainer>
             </Fragment>
         }
@@ -147,7 +133,6 @@ class App extends Component {
                     <Navbar.Collapse>
                         <Nav pullRight>
                             {this.renderAdminLinks()}
-                            {this.renderSupervisorLinks()}
                             {this.renderUserLinks()}
                         </Nav>
                     </Navbar.Collapse>

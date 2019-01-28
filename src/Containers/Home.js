@@ -22,7 +22,6 @@ export default class Home extends Component {
 
     getActivities(){
         if (this.props.isAuthenticated) {
-            console.log(this.props.user);
             $.ajax({
                 url: 'http://localhost:8888/bookin-api/public/api/user/' + this.props.user.id,
                 dataType: 'json',
@@ -31,7 +30,6 @@ export default class Home extends Component {
                 },
                 cache: false,
                 success: function(data){
-                    console.log(data.data);
                     this.setState({activities: data.data.goesToActivity}, function(){
                     });
                 }.bind(this),
@@ -62,7 +60,7 @@ export default class Home extends Component {
     renderActivities() {
         return (
             <div className="activities">
-                <PageHeader>Your Activities</PageHeader>
+                <PageHeader>Dina aktiviteter</PageHeader>
                 <ListGroup>
                     {this.renderActivitesList(this.state.activities)}
                 </ListGroup>

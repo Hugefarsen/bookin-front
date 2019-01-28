@@ -19,7 +19,6 @@ export default class Categories extends Component {
     }
 
     getCategories(){
-        console.log(this);
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
