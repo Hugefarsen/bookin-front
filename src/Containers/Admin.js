@@ -20,14 +20,10 @@ export default class Admin extends Component {
             endDate: "",
             selectedCategory: "",
             selectedRoom: "",
-            activities: [],
-            roomsOptions: []
-
+            activities: []
         };
 
         this.handleDeleteUser = this.handleDeleteUser.bind(this);
-
-        this.renderUsersList = this.renderUsersList;
     }
 
     componentWillMount() {
@@ -35,8 +31,6 @@ export default class Admin extends Component {
         this.getCategories();
         this.getRooms();
         this.getActivities();
-        this.getCategoriesOptions();
-        this.getRoomsOptions();
     }
 
 
@@ -85,30 +79,6 @@ export default class Admin extends Component {
             }
         });
     };
-
-    getCategoriesOptions(){
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
-            dataType: 'json',
-            headers: {
-                'Authorization': 'Bearer ' + this.props.user.token,
-            },
-            cache: false,
-            success: function(data){
-                let optionItems = data.data.map((category) =>
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                );
-                this.setState({categoriesOptions: optionItems});
-
-
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.log(err);
-            }
-        });
-    };
-
 
     handleDeleteCategory(e) {
         e.preventDefault();
@@ -317,7 +287,7 @@ export default class Admin extends Component {
                     <br />
                     {"Email: " + row.email}
                     <br />
-                    {"Roles:" + this.renderUserRoles(row.role)}
+                    {"Roll:" + this.renderUserRoles(row.role)}
                     <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteUser(e)}>Ta bort <Glyphicon glyph="trash" />
                     </Button>
                 </ListGroupItem>
@@ -351,8 +321,6 @@ export default class Admin extends Component {
     }
 
     renderActivitiesList(activities){
-        console.log(activities);
-
         return activities.map((row) => {
             return <LinkContainer
                 key={row.id}
@@ -438,7 +406,6 @@ export default class Admin extends Component {
             },
             cache: false,
             success: function(data){
-                console.log(data);
                 that.state.activities.push(data.data);
                 that.setState({ isLoading: false });
             },
@@ -454,11 +421,16 @@ export default class Admin extends Component {
 
     };
 
-    getRoomsOptions(options){
-        console.log(options)
-        return options.map((row) => {
-            return <option key={row.id} value={row.id}>{row.name}</option>
+    renderRoomsOptions(rooms){
+        return rooms.map((room) => {
+            return <option key={room.id} value={room.id}>{room.name}</option>
             }
+        );
+    };
+
+    renderCategoriesOptions(categories){
+        return categories.map((category) =>
+            <option key={category.id} value={category.id}>{category.name}</option>
         );
     };
 
@@ -596,7 +568,7 @@ export default class Admin extends Component {
                                                 <option value="" disabled={this.state.selectedCategory !== ""} defaultValue>
                                                     Välj kategori
                                                 </option>
-                                                {this.state.categoriesOptions}
+                                                {this.renderCategoriesOptions(this.state.categories)}
                                             </FormControl>
                                         </FormGroup>
 
@@ -608,7 +580,7 @@ export default class Admin extends Component {
                                                 <option value="" disabled={this.state.selectedRoom !== ""} defaultValue>
                                                     Välj rum
                                                 </option>
-                                                {this.state.getRoomsOptions(this.state.roomsOptions)}
+                                                {this.renderRoomsOptions(this.state.rooms)}
                                             </FormControl>
                                         </FormGroup>
 
