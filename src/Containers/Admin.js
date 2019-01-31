@@ -284,6 +284,7 @@ export default class Admin extends Component {
 
                 <tr>
                     <td>{row.id}</td>
+                    <td>{row.name}</td>
                     <td>{row.email}</td>
                     <td>{this.renderUserRoles(row.role)}</td>
                     <td>
@@ -325,21 +326,20 @@ export default class Admin extends Component {
             return <LinkContainer
                 key={row.id}
                 to={`/activity/${row.id}`}
-                className="row"
             >
-                <ListGroupItem header={row.category.name}>
-                    {"Ledare: " + this.renderActivityOwner(row.owner)}
-                    <br />
-                    {"Start: " + row.start}
-                    <br />
-                    {"Slut: " + row.end}
-                    <br />
-                    {"Rum: " + row.room.name}
-                    <br />
-                    {"Bokade: " + row.users.length + "/" + row.room.size}
-                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteActivity(e)}>Ta bort <Glyphicon glyph="trash" />
-                    </Button>
-                </ListGroupItem>
+
+                <tr>
+                    <td>{this.renderActivityOwner(row.owner)}</td>
+                    <td>{row.start}</td>
+                    <td>{row.end}</td>
+                    <td>{row.room.name}</td>
+                    <td>{row.users.length + "/" + row.room.size}</td>
+
+                    <td>
+                        <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteActivity(e)}>Ta bort <Glyphicon glyph="trash" />
+                        </Button>
+                    </td>
+                </tr>
             </LinkContainer>
         })
 
@@ -545,14 +545,15 @@ export default class Admin extends Component {
                                 <div className="userlists">
                                     <Table striped bordered hover>
                                         <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Email</th>
-                                            <th>Roller</th>
-                                        </tr>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Namn</th>
+                                                <th>Email</th>
+                                                <th>Roller</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        {this.renderUsersList(this.state.users)}
+                                            {this.renderUsersList(this.state.users)}
                                         </tbody>
                                     </Table>
                                 </div>
@@ -619,11 +620,25 @@ export default class Admin extends Component {
                                                       loadingText="Skapar…"
                                         />
                                     </form>
-                                    <div className="activitiesList">
-                                        <h3>Redigera aktivitet</h3>
-                                        {this.renderActivitiesList(this.state.activities)}
-                                    </div>
                                 </div>
+                                <hr/>
+                                    <div className="activitiesList">
+                                        <Table striped bordered hover>
+                                            <thead>
+                                            <tr>
+                                                <th>Instruktör</th>
+                                                <th>Starttid</th>
+                                                <th>Sluttid</th>
+                                                <th>Rum</th>
+                                                <th>Bokade</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.renderActivitiesList(this.state.activities)}
+                                            </tbody>
+                                        </Table>
+                                    </div>
                             </Panel.Body>
                         </Panel.Collapse>
                     </Panel>
