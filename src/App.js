@@ -33,7 +33,7 @@ class App extends Component {
         this.setState({ isSupervisor: supervisor });
     };
 
-    handleLogout = event => {
+    handleLogout = () => {
         this.userHasAuthenticated(false);
         this.setState({user: {}, isAdmin: false, isSupervisor: false});
         localStorage.setItem('user', "");
@@ -83,7 +83,6 @@ class App extends Component {
             )
         }
     }
-
 
     renderUserLinks(){
         if(this.state.isAuthenticated){

@@ -28,9 +28,9 @@ class Login extends Component {
     handleSubmit = async event => {
         event.preventDefault();
         this.setState({ isLoading: true });
+        let that = this;
 
-        try {
-            await $.ajax({
+        $.ajax({
                 type: 'POST',
                 url: 'http://localhost:8888/bookin-api/public/api/login',
                 dataType: 'json',
@@ -58,11 +58,13 @@ class Login extends Component {
                 }.bind(this),
                 error: function(xhr, status, err){
                     console.log(err);
+                    if(err === "Unauthorized"){
+                        alert("Du har angivet fel email eller lösenord");
+                    }
+                    that.setState({isLoading: false});
                 }
             });
-        } catch (e) {
-            alert(e.message);
-        }
+
     };
 
     render() {

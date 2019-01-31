@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {LinkContainer} from "react-router-bootstrap";
-import {ControlLabel, FormControl, FormGroup, Glyphicon, ListGroupItem, PageHeader, PanelGroup, Panel, Button} from "react-bootstrap";
+import {ControlLabel, FormControl, FormGroup, Glyphicon, ListGroupItem, PageHeader, PanelGroup, Panel, Button, Table} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
 import Moment from "moment";
 import DateTime from "react-datetime";
@@ -280,17 +280,17 @@ export default class Admin extends Component {
             return <LinkContainer
                 key={row.id}
                 to={`/user/${row.id}`}
-                className="row"
             >
-                <ListGroupItem header={row.name}>
-                    {"Id: " + row.id}
-                    <br />
-                    {"Email: " + row.email}
-                    <br />
-                    {"Roll:" + this.renderUserRoles(row.role)}
-                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteUser(e)}>Ta bort <Glyphicon glyph="trash" />
-                    </Button>
-                </ListGroupItem>
+
+                <tr>
+                    <td>{row.id}</td>
+                    <td>{row.email}</td>
+                    <td>{this.renderUserRoles(row.role)}</td>
+                    <td>
+                        <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteUser(e)}>Ta bort <Glyphicon glyph="trash" />
+                        </Button>
+                    </td>
+                </tr>
             </LinkContainer>
         })
     }
@@ -543,7 +543,18 @@ export default class Admin extends Component {
                             <Panel.Body>
                                 <h3>Hantera användare</h3>
                                 <div className="userlists">
-                                    {this.renderUsersList(this.state.users)}
+                                    <Table striped bordered hover>
+                                        <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Email</th>
+                                            <th>Roller</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.renderUsersList(this.state.users)}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             </Panel.Body>
                         </Panel.Collapse>
