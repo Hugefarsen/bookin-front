@@ -110,18 +110,20 @@ export default class Admin extends Component {
     }
 
     renderCategoriesList(categories) {
+        console.log(categories);
         return categories.map((row) => {
-            return <LinkContainer
-                    key={row.id}
-                    to={`/category/${row.id}`}
-                    className="row"
-                >
-                    <ListGroupItem header={row.name}>
-                        {"Beskrivning: " + row.description}
+            return <LinkContainer key={row.id} to={`/category/${row.id}`}>
+                <tr>
+                    <td>{row.id}</td>
+                    <td>{row.name}</td>
+                    <td>{row.description}</td>
+                    <td>{row.activities.length}</td>
+                    <td>
                         <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteCategory(e)}>Ta bort <Glyphicon glyph="trash" />
                         </Button>
-                    </ListGroupItem>
-                </LinkContainer>
+                    </td>
+                </tr>
+            </LinkContainer>
         })
     }
 
@@ -206,17 +208,17 @@ export default class Admin extends Component {
             return <LinkContainer
                 key={row.id}
                 to={`/user/${row.id}`}
-                className="row"
             >
-                <ListGroupItem header={row.name}>
-                    {"Id: " + row.id}
-                    <br />
-                    {"Beskrivning: " + row.description}
-                    <br />
-                    {"Storlek: " + row.size}
-                    <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteRoom(e)}>Ta bort <Glyphicon glyph="trash" />
-                    </Button>
-                </ListGroupItem>
+                <tr>
+                    <td>{row.id}</td>
+                    <td>{row.name}</td>
+                    <td>{row.description}</td>
+                    <td>{row.size}</td>
+                    <td>
+                        <Button className="pull-right" bsStyle="danger" id={row.id} onClick={e => this.handleDeleteRoom(e)}>Ta bort <Glyphicon glyph="trash" />
+                        </Button>
+                    </td>
+                </tr>
             </LinkContainer>
         })
     }
@@ -277,11 +279,7 @@ export default class Admin extends Component {
 
     renderUsersList(users) {
         return users.map((row) => {
-            return <LinkContainer
-                key={row.id}
-                to={`/user/${row.id}`}
-            >
-
+            return <LinkContainer key={row.id} to={`/user/${row.id}`}>
                 <tr>
                     <td>{row.id}</td>
                     <td>{row.name}</td>
@@ -476,9 +474,23 @@ export default class Admin extends Component {
                                                   loadingText="Skapar…"
                                     />
                                 </form>
+                                <hr/>
                                 <div className="categorylist">
                                     <h3>Redigera kategori</h3>
-                                    {this.renderCategoriesList(this.state.categories)}
+                                    <Table striped bordered hover>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Namn</th>
+                                                <th>Beskrivning</th>
+                                                <th>Antal aktiviteter</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.renderCategoriesList(this.state.categories)}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             </Panel.Body>
                         </Panel.Collapse>
@@ -526,9 +538,23 @@ export default class Admin extends Component {
                                                   loadingText="Skapar…"
                                     />
                                 </form>
+                                <hr/>
                                 <div className="categorylist">
                                     <h3>Redigera rum</h3>
-                                    {this.renderRoomsList(this.state.rooms)}
+                                    <Table striped bordered hover>
+                                        <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Namn</th>
+                                            <th>Beskrivning</th>
+                                            <th>Antal platser</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.renderRoomsList(this.state.rooms)}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             </Panel.Body>
                         </Panel.Collapse>
@@ -550,6 +576,7 @@ export default class Admin extends Component {
                                                 <th>Namn</th>
                                                 <th>Email</th>
                                                 <th>Roller</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -622,23 +649,23 @@ export default class Admin extends Component {
                                     </form>
                                 </div>
                                 <hr/>
-                                    <div className="activitiesList">
-                                        <Table striped bordered hover>
-                                            <thead>
-                                            <tr>
-                                                <th>Instruktör</th>
-                                                <th>Starttid</th>
-                                                <th>Sluttid</th>
-                                                <th>Rum</th>
-                                                <th>Bokade</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                {this.renderActivitiesList(this.state.activities)}
-                                            </tbody>
-                                        </Table>
-                                    </div>
+                                <div className="activitiesList">
+                                    <Table striped bordered hover>
+                                        <thead>
+                                        <tr>
+                                            <th>Instruktör</th>
+                                            <th>Starttid</th>
+                                            <th>Sluttid</th>
+                                            <th>Rum</th>
+                                            <th>Bokade</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.renderActivitiesList(this.state.activities)}
+                                        </tbody>
+                                    </Table>
+                                </div>
                             </Panel.Body>
                         </Panel.Collapse>
                     </Panel>
