@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ListGroupItem, PageHeader, ListGroup} from "react-bootstrap";
+import { PageHeader, Table } from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 
 import $ from "jquery";
@@ -44,20 +44,19 @@ export default class Activity extends Component {
     }
 
     renderActivitiesList(activities){
-        console.log(activities);
         return activities.map((row) => {
             return <LinkContainer
                 key={row.id}
-                to={`/activity/${row.id}`}>
-                    <ListGroupItem header={"Start: " + new Date(row.start).toLocaleString()}>
-                        {"Slut: " + new Date(row.end).toLocaleString()}
-                        <br/>
-                        {"Rum: " + row.room.name}
-                        <br/>
-                        {"Bokade: " + row.users.length + " of " + row.room.size}
-                        <br/>
-                        {"Ledare: " + this.renderActivityOwner(row.owner)}
-                    </ListGroupItem>
+                to={`/activity/${row.id}`}
+            >
+
+                <tr>
+                    <td>{this.renderActivityOwner(row.owner)}</td>
+                    <td>{row.start}</td>
+                    <td>{row.end}</td>
+                    <td>{row.room.name}</td>
+                    <td>{row.users.length + "/" + row.room.size}</td>
+                </tr>
             </LinkContainer>
         })
     }
@@ -66,9 +65,20 @@ export default class Activity extends Component {
         return (
             <div className="activities">
                 <PageHeader>{this.state.category.name}</PageHeader>
-                <ListGroup>
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>Instruktör</th>
+                        <th>Starttid</th>
+                        <th>Sluttid</th>
+                        <th>Rum</th>
+                        <th>Bokade</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {this.renderActivitiesList(this.state.activities)}
-                </ListGroup>
+                    </tbody>
+                </Table>
             </div>
         )
     }
@@ -76,9 +86,7 @@ export default class Activity extends Component {
     render() {
         return(
             <div className="Category">
-                <ListGroup>
                     {this.renderActivities()}
-                </ListGroup>
             </div>
         )
     }

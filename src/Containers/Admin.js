@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import {LinkContainer} from "react-router-bootstrap";
-import {ControlLabel, FormControl, FormGroup, Glyphicon, ListGroupItem, PageHeader, PanelGroup, Panel, Button, Table} from "react-bootstrap";
+import {ControlLabel, FormControl, FormGroup, Glyphicon, PageHeader, PanelGroup, Panel, Button, Table} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
+import ActivityList from "./ActivityList"
 import Moment from "moment";
 import DateTime from "react-datetime";
 import $ from "jquery";
@@ -110,7 +111,6 @@ export default class Admin extends Component {
     }
 
     renderCategoriesList(categories) {
-        console.log(categories);
         return categories.map((row) => {
             return <LinkContainer key={row.id} to={`/category/${row.id}`}>
                 <tr>
@@ -340,7 +340,6 @@ export default class Admin extends Component {
                 </tr>
             </LinkContainer>
         })
-
     }
 
     handleDeleteActivity(e){
@@ -373,13 +372,13 @@ export default class Admin extends Component {
     }
 
     handleStartDate(date){
-        let dateToInsert = new Moment(date).format("YYYY-MM-DD HH:mm:ss");
-        let endDate = new Moment(date).add(1, 'hours').format("YYYY-MM-DD HH:mm:ss");
+        let dateToInsert = new Moment(date);
+        let endDate = new Moment(date).add(1, 'hours');
         this.setState({startDate : dateToInsert, endDate: endDate});
     };
 
     handleEndDate(date){
-        let dateToInsert = new Moment(date).format("YYYY-MM-DD HH:mm:ss");
+        let dateToInsert = new Moment(date);
         this.setState({endDate : dateToInsert});
     };
 
@@ -397,8 +396,8 @@ export default class Admin extends Component {
             },
             data: {
                 'room_id': this.state.selectedRoom,
-                'start': this.state.startDate,
-                'end': this.state.endDate,
+                'start': this.state.startDate.format("YYYY-MM-DD HH:mm:ss"),
+                'end': this.state.endDate.format("YYYY-MM-DD HH:mm:ss"),
                 'category_id': this.state.selectedCategory,
                 'owner': this.props.user.id
             },
@@ -650,21 +649,24 @@ export default class Admin extends Component {
                                 </div>
                                 <hr/>
                                 <div className="activitiesList">
-                                    <Table striped bordered hover>
-                                        <thead>
-                                        <tr>
-                                            <th>Instruktör</th>
-                                            <th>Starttid</th>
-                                            <th>Sluttid</th>
-                                            <th>Rum</th>
-                                            <th>Bokade</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {this.renderActivitiesList(this.state.activities)}
-                                        </tbody>
-                                    </Table>
+                                    <h3>Hantera aktiviteter</h3>
+
+                               <Table striped bordered hover>
+                                                                            <thead>
+                                                                            <tr>
+                                                                                <th>Instruktör</th>
+                                                                                <th>Starttid</th>
+                                                                                <th>Sluttid</th>
+                                                                                <th>Rum</th>
+                                                                                <th>Bokade</th>
+                                                                                <th></th>
+                                                                            </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            {this.renderActivitiesList(this.state.activities)}
+                                                                            </tbody>
+                                                                        </Table>
+
                                 </div>
                             </Panel.Body>
                         </Panel.Collapse>

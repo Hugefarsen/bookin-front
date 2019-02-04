@@ -18,6 +18,8 @@ export default class User extends Component {
     }
 
     getUser() {
+        let that = this;
+        console.log(this);
         $.ajax({
             url: 'http://localhost:8888/bookin-api/public/api/user/' + this.props.match.params.id,
             dataType: 'json',
@@ -26,9 +28,18 @@ export default class User extends Component {
             },
             cache: false,
             success: function(data){
-                this.setState({user: data.data});
+                if(data.data.id === that.props.user.id || that.props.isAdmin || that.props.isSupervisor){
+                    this.setState({user: data.data});
+                } else {
+                    alert('Du får enbart kolla på dina uppgifter.');
+                    that.props.history.goBack();
+                }
             }.bind(this),
             error: function(xhr, status, err){
+                if(err === 'Not Found'){
+                    alert('Användaren med id ' + that.props.match.params.id + ' finns ej.');
+                    that.props.history.goBack();
+                }
                 console.log(err);
             }
         })
