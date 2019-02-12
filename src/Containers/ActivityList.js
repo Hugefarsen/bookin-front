@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {LinkContainer} from "react-router-bootstrap";
 import {Button, Glyphicon, Table} from "react-bootstrap";
-import $ from "jquery";
 
 class ActivityList extends Component {
     constructor(props) {

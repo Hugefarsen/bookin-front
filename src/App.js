@@ -91,7 +91,7 @@ class App extends Component {
                     <LinkContainer to="/categories">
                         <NavItem>Kategorier</NavItem>
                     </LinkContainer>
-                    <LinkContainer to="/home">
+                    <LinkContainer to={`/user/${this.state.user.id}`}>
                         <NavItem>Dina aktiviteter</NavItem>
                     </LinkContainer>
                     <NavItem onClick={this.handleLogout}>Logga ut</NavItem>

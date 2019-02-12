@@ -6,6 +6,7 @@ import ActivityList from "./ActivityList"
 import Moment from "moment";
 import DateTime from "react-datetime";
 import $ from "jquery";
+import config from "../config"
 
 export default class Admin extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ export default class Admin extends Component {
 
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
+            url: config.apiUrl + '/activitycategory',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -65,7 +66,7 @@ export default class Admin extends Component {
     getCategories(){
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
+            url: config.apiUrl + '/activitycategory',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -87,7 +88,7 @@ export default class Admin extends Component {
         let targetId = e.target.id;
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory/' + e.target.id,
+            url: config.apiUrl + '/activitycategory/' + e.target.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -134,7 +135,7 @@ export default class Admin extends Component {
 
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/room',
+            url: config.apiUrl + '/room',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -158,7 +159,7 @@ export default class Admin extends Component {
     getRooms(){
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/room',
+            url: config.apiUrl + '/room',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -180,7 +181,7 @@ export default class Admin extends Component {
         let targetId = e.target.id;
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8888/bookin-api/public/api/room/' + e.target.id,
+            url: config.apiUrl + '/room/' + e.target.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -226,7 +227,7 @@ export default class Admin extends Component {
     getUsers(){
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/user',
+            url: config.apiUrl + '/user',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -248,7 +249,7 @@ export default class Admin extends Component {
         let targetId = e.target.id;
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8888/bookin-api/public/api/user/' + e.target.id,
+            url: config.apiUrl + '/user/' + e.target.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -303,7 +304,7 @@ export default class Admin extends Component {
     getActivities(){
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/activity',
+            url: config.apiUrl + '/activity',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -348,7 +349,7 @@ export default class Admin extends Component {
         let targetId = e.target.id;
         $.ajax({
             type: 'DELETE',
-            url: 'http://localhost:8888/bookin-api/public/api/activity/' + e.target.id,
+            url: config.apiUrl + '/activity/' + e.target.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -384,12 +385,11 @@ export default class Admin extends Component {
 
     createActivity = async event => {
         event.preventDefault();
-        let that = this;
 
         this.setState({ isLoading: true });
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/activity',
+            url: config.apiUrl + '/activity',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -402,16 +402,16 @@ export default class Admin extends Component {
                 'owner': this.props.user.id
             },
             cache: false,
-            success: function(data){
-                that.state.activities.push(data.data);
-                that.setState({ isLoading: false });
+            success: (data) => {
+                this.state.activities.push(data.data);
+                this.setState({ isLoading: false });
             },
-            error: function(xhr, status, err){
+            error: (xhr, status, err) => {
                 console.log(err);
                 if(xhr.responseText) {
                     let responseTxt = JSON.parse(xhr.responseText);
                     alert('Rummet är tyvärr bokat mellan ' + responseTxt.prebooked[0].start + ' och ' + responseTxt.prebooked[0].end);
-                    that.setState({isLoading: false});
+                    this.setState({isLoading: false});
                 }
             }
         });
@@ -639,7 +639,7 @@ export default class Admin extends Component {
                                         <LoaderButton block
                                                       bsStyle="primary"
                                                       bsSize="large"
-                                            //    disabled={!this.validateForm()}
+                                                    //  disabled={!this.validateForm()}
                                                       type="submit"
                                                       isLoading={this.state.isLoading}
                                                       text="Skapa"
@@ -650,23 +650,21 @@ export default class Admin extends Component {
                                 <hr/>
                                 <div className="activitiesList">
                                     <h3>Hantera aktiviteter</h3>
-
-                               <Table striped bordered hover>
-                                                                            <thead>
-                                                                            <tr>
-                                                                                <th>Instruktör</th>
-                                                                                <th>Starttid</th>
-                                                                                <th>Sluttid</th>
-                                                                                <th>Rum</th>
-                                                                                <th>Bokade</th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                            {this.renderActivitiesList(this.state.activities)}
-                                                                            </tbody>
-                                                                        </Table>
-
+                                    <Table striped bordered hover>
+                                        <thead>
+                                        <tr>
+                                            <th>Instruktör</th>
+                                            <th>Starttid</th>
+                                            <th>Sluttid</th>
+                                            <th>Rum</th>
+                                            <th>Bokade</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.renderActivitiesList(this.state.activities)}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             </Panel.Body>
                         </Panel.Collapse>

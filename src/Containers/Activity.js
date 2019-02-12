@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { ListGroupItem, PageHeader, ListGroup, Button, Glyphicon} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 import "./Activity.css";
+import config from "../config"
 
 import $ from "jquery";
 
@@ -35,28 +36,27 @@ export default class Activity extends Component {
         }
     }
 
-    getActivity() {
-        let that = this;
+    getActivity = () => {
         $.ajax({
-            url: 'http://localhost:8888/bookin-api/public/api/activity/' + this.props.match.params.id,
+            url: config.apiUrl + '/activity/' + this.props.match.params.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
             },
             cache: false,
-            success: function (data) {
+            success: (data) => {
                 this.setState({
                     activity: data.data,
                     category: data.data.category,
                     users: data.data.users,
                     room: data.data.room
                 });
-                that.checkBooked(data.data.users);
-            }.bind(this),
-            error: function (xhr, status, err) {
+                this.checkBooked(data.data.users);
+            },
+            error: (xhr, status, err) => {
                 if (err === "Not Found") {
                     alert('Aktiviteten hittades inte');
-                    that.props.history.goBack()
+                    this.props.history.goBack()
                 }
             }
         })
@@ -90,11 +90,10 @@ export default class Activity extends Component {
         )
     }
 
-    book(e) {
-        let that = this;
+    book = (e) => {
         $.ajax({
             type: 'PUT',
-            url: 'http://localhost:8888/bookin-api/public/api/activity/' + this.props.match.params.id + '/book',
+            url: config.apiUrl + '/activity/' + this.props.match.params.id + '/book',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -104,23 +103,22 @@ export default class Activity extends Component {
                 'activity_id': this.props.match.params.id,
             },
             cache: false,
-            success: function (data) {
-                that.setState({
+            success: (data) => {
+                this.setState({
                     users: data.users,
                 });
-                that.checkBooked(data.users);
+                this.checkBooked(data.users);
             },
-            error: function (xhr, status, err) {
+            error: (xhr, status, err) => {
                 console.log(err);
             }
         })
     }
 
-    cancel(e) {
-        let that = this;
+    cancel = (e) => {
         $.ajax({
             type: 'PUT',
-            url: 'http://localhost:8888/bookin-api/public/api/activity/' + this.props.match.params.id + '/cancel',
+            url: config.apiUrl + '/activity/' + this.props.match.params.id + '/cancel',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,
@@ -130,14 +128,14 @@ export default class Activity extends Component {
                 'activity_id': this.props.match.params.id,
             },
             cache: false,
-            success: function (data) {
-                that.setState({
+            success: (data) => {
+                this.setState({
                     users: data.users, isBooked:false,
                 });
-                that.checkBooked(data.users);
+                this.checkBooked(data.users);
 
             },
-            error: function (xhr, status, err) {
+            error: (xhr, status, err) => {
                 console.log(err);
             }
         })

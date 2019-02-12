@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { PageHeader, Table } from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
+import config from "../config"
 
 import $ from "jquery";
 
@@ -21,7 +22,7 @@ export default class Activity extends Component {
 
     getActivities() {
         $.ajax({
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory/' + this.props.match.params.id,
+            url: config.apiUrl + '/activitycategory/' + this.props.match.params.id,
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {PageHeader, Table} from "react-bootstrap";
 import $ from "jquery";
 import {LinkContainer} from "react-router-bootstrap";
+import config from "../config"
 
 export default class Categories extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ export default class Categories extends Component {
     getCategories(){
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8888/bookin-api/public/api/activitycategory',
+            url: config.apiUrl + '/activitycategory',
             dataType: 'json',
             headers: {
                 'Authorization': 'Bearer ' + this.props.user.token,

@@ -3,6 +3,7 @@ import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Login.css";
 import LoaderButton from "../Components/LoaderButton";
 import $ from "jquery";
+import config from "../config"
 
 class Login extends Component {
     constructor(props) {
@@ -28,18 +29,17 @@ class Login extends Component {
     handleSubmit = async event => {
         event.preventDefault();
         this.setState({ isLoading: true });
-        let that = this;
 
         $.ajax({
                 type: 'POST',
-                url: 'http://localhost:8888/bookin-api/public/api/login',
+                url: config.apiUrl + '/login',
                 dataType: 'json',
                 data: {
                     'email': this.state.email,
                     'password': this.state.password
                 },
                 cache: false,
-                success: function(data){
+                success: (data) => {
                     let user = data.success;
                     user['token'] = data.token;
                     this.props.userLog(user);
@@ -55,13 +55,13 @@ class Login extends Component {
                     }
                     this.props.userHasAuthenticated(true);
                     this.props.history.push("/");
-                }.bind(this),
-                error: function(xhr, status, err){
+                },
+                error: (xhr, status, err) => {
                     console.log(err);
                     if(err === "Unauthorized"){
                         alert("Du har angivet fel email eller lösenord");
                     }
-                    that.setState({isLoading: false});
+                    this.setState({isLoading: false});
                 }
             });
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import Home from "./Containers/Home";
 import Login from "./Containers/Login";
 import Signup from "./Containers/Signup";
 import Lander from "./Containers/Lander";
@@ -32,7 +31,6 @@ export default ( {childProps}) =>
 
         <AdminRoute path="/admin" exact component={Admin} props={childProps} />
 
-        <AuthenticatedRoute path="/home" exact component={Home} props={childProps} />
 
         <AuthenticatedRoute path="/activity/:id" exact component={Activity} props={childProps} />
         <AuthenticatedRoute path="/categories" exact component={Categories} props={childProps} />

@@ -3,6 +3,7 @@ import { Form, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
 import "./Signup.css";
 import $ from "jquery";
+import config from "../config"
 
 export default class Signup extends Component {
     constructor(props) {
@@ -35,12 +36,11 @@ export default class Signup extends Component {
 
     handleSubmit = async event => {
         event.preventDefault();
-        var that = this;
         this.setState({ isLoading: true });
 
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8888/bookin-api/public/api/register',
+            url: config.apiUrl + '/register',
             dataType: 'json',
             data: {
                 'name': this.state.name,
@@ -58,9 +58,9 @@ export default class Signup extends Component {
                 this.props.userHasAuthenticated(true);
 
             }.bind(this),
-            error: function(xhr, status, err){
+            error: (xhr, status, err) => {
                 console.log(err);
-                that.setState({ isLoading: false });
+                this.setState({ isLoading: false });
             }
         });
     }
