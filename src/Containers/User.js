@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from "react";
-import {Button, Table} from "react-bootstrap";
+import {Button, Table, Form, InputGroup, FormControl} from "react-bootstrap";
 import config from "../config";
 
 import $ from "jquery";
@@ -11,7 +11,9 @@ export default class User extends Component {
 
         this.state = {
             user: {},
-            activities: []
+            activities: [],
+            showPasswordChange: false,
+            showEmailChange: false,
         };
     }
 
@@ -20,6 +22,14 @@ export default class User extends Component {
         this.getActivities();
         console.log(this);
     }
+
+    showPasswordChange = () => {
+        this.setState({showPasswordChange: true})
+    };
+
+    showEmailChange = () => {
+        this.setState({showEmailChange: true})
+    };
 
     getUser = () => {
         const userId = this.props.user.id;
@@ -52,23 +62,6 @@ export default class User extends Component {
         })
     }
 
-    renderUserInformation(){
-        return (
-            <Fragment>
-                <section className="jumbotron text-center">
-                    <div className="container">
-                        <h1 className="jumbotron-heading">{this.state.user.name}</h1>
-                        <p className="lead text-muted">#{this.state.user.id}</p>
-                        <p>{this.state.user.email}</p>
-                        <Button bsStyle="success">Byt lösenord</Button>
-                        <Button bsStyle="warning">Byt email</Button>
-                    </div>
-                </section>
-            </Fragment>
-        )
-    }
-
-
     getActivities(){
         if (this.props.isAuthenticated) {
             $.ajax({
@@ -87,6 +80,95 @@ export default class User extends Component {
                 }
             })
         }
+    }
+
+    renderChangePasswordForm(){
+        if (this.state.showPasswordChange) {
+            return (
+                <Form>
+                    <InputGroup className="row">
+                        <InputGroup>
+                            <InputGroup id="username">Användarnamn</InputGroup>
+                        </InputGroup>
+                        <FormControl
+                            placeholder="Användarnamn"
+                            aria-label="Användarnamn"
+                            aria-describedby="username"
+                        />
+                        <InputGroup >
+                            <InputGroup id="password">Lösenord</InputGroup>
+                        </InputGroup>
+                        <FormControl
+                            placeholder="Lösenord"
+                            aria-label="Lösenord"
+                            aria-describedby="password"
+                        />
+                        <InputGroup>
+                            <InputGroup id="password_c">Bekräfta lösenord</InputGroup>
+                        </InputGroup>
+                        <FormControl
+                            placeholder="Bekräfta lösenord"
+                            aria-label="Bekräfta lösenord"
+                            aria-describedby="password_c"
+                        />
+
+                        <button className="btn-warning">Spara nytt lösen </button>
+                    </InputGroup>
+                </Form>
+            )
+        }
+    }
+
+    renderChangeMailForm(){
+        if (this.state.showEmailChange) {
+            return(
+                <Form>
+                    <InputGroup className="mb-3 row">
+                        <InputGroup>
+                            <InputGroup id="email_old">Nuvarande email</InputGroup>
+                        </InputGroup>
+                        <FormControl
+                            placeholder="Nuvarande email"
+                            aria-label="Nuvarande email"
+                            aria-describedby="email_old"
+                        />
+                        <InputGroup id="email_new">Ny email</InputGroup>
+                        <InputGroup>
+                        <FormControl
+                            placeholder="Ny email"
+                            aria-label="Ny email"
+                            aria-describedby="email_new"
+                        />
+                        <InputGroup id="email_new_c">Bekräfta ny email</InputGroup>
+                        </InputGroup>
+                        <FormControl
+                            placeholder="Bekräfta ny email"
+                            aria-label="Bekräfta ny email"
+                            aria-describedby="email_new_c"
+                        />
+                        </InputGroup>
+                </Form>
+            )
+        }
+    }
+
+    renderUserInformation(){
+        return (
+            <Fragment>
+                <section className="jumbotron text-center">
+                    <div className="container">
+                        <h1 className="jumbotron-heading">{this.state.user.name}</h1>
+                        <p className="lead text-muted">#{this.state.user.id}</p>
+                        <p>{this.state.user.email}</p>
+                        <Button bsStyle="success" onClick={this.showPasswordChange}>Byt lösenord</Button>
+                        <Button bsStyle="warning" onClick={this.showEmailChange}>Byt email</Button>
+
+                        { this.renderChangePasswordForm() }
+                        { this.renderChangeMailForm() }
+                    </div>
+                </section>
+            </Fragment>
+        )
     }
 
     renderActivityOwner(owner){

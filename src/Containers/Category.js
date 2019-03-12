@@ -11,9 +11,8 @@ export default class Activity extends Component {
 
         this.state = {
             activities: [],
-            category: {},
+            category: {}
         };
-        this.renderActivitiesList = this.renderActivitiesList
     }
 
     componentDidMount() {
