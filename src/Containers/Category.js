@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { PageHeader, Table } from "react-bootstrap";
-import {LinkContainer} from "react-router-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import config from "../config"
 
 import $ from "jquery";

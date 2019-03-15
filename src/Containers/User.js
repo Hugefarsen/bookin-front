@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from "react";
-import {Button, Table, Form, InputGroup, FormControl} from "react-bootstrap";
+import {Button, Table, Form, InputGroup, FormControl, Row, Col} from "react-bootstrap";
 import config from "../config";
 
 import $ from "jquery";
@@ -20,7 +20,6 @@ export default class User extends Component {
     componentWillMount() {
         this.getUser();
         this.getActivities();
-        console.log(this);
     }
 
     showPasswordChange = () => {
@@ -53,14 +52,13 @@ export default class User extends Component {
             },
             error: (xhr, status, err) => {
                 if(err === 'Not Found'){
-                    console.log(this);
                     alert('Användaren med id ' + this.props.match.params.id + ' finns ej.');
                     this.props.history.goBack();
                 }
                 console.log(err);
             }
         })
-    }
+    };
 
     getActivities(){
         if (this.props.isAuthenticated) {
@@ -86,34 +84,42 @@ export default class User extends Component {
         if (this.state.showPasswordChange) {
             return (
                 <Form>
-                    <InputGroup className="row">
-                        <InputGroup>
-                            <InputGroup id="username">Användarnamn</InputGroup>
-                        </InputGroup>
-                        <FormControl
-                            placeholder="Användarnamn"
-                            aria-label="Användarnamn"
-                            aria-describedby="username"
-                        />
-                        <InputGroup >
-                            <InputGroup id="password">Lösenord</InputGroup>
-                        </InputGroup>
-                        <FormControl
-                            placeholder="Lösenord"
-                            aria-label="Lösenord"
-                            aria-describedby="password"
-                        />
-                        <InputGroup>
-                            <InputGroup id="password_c">Bekräfta lösenord</InputGroup>
-                        </InputGroup>
-                        <FormControl
-                            placeholder="Bekräfta lösenord"
-                            aria-label="Bekräfta lösenord"
-                            aria-describedby="password_c"
-                        />
+                    <Row>
+                        <Col>
+                            <InputGroup>
+                                <InputGroup>
+                                    <InputGroup id="username">Användarnamn</InputGroup>
+                                </InputGroup>
+                                <FormControl
+                                    placeholder="Användarnamn"
+                                    aria-label="Användarnamn"
+                                    aria-describedby="username"
+                                />
+                                <InputGroup >
+                                    <InputGroup id="password">Lösenord</InputGroup>
+                                </InputGroup>
+                                <FormControl
+                                    placeholder="Lösenord"
+                                    aria-label="Lösenord"
+                                    aria-describedby="password"
+                                />
+                                <InputGroup>
+                                    <InputGroup id="password_c">Bekräfta lösenord</InputGroup>
+                                </InputGroup>
+                                <FormControl
+                                    placeholder="Bekräfta lösenord"
+                                    aria-label="Bekräfta lösenord"
+                                    aria-describedby="password_c"
+                                />
 
-                        <button className="btn-warning">Spara nytt lösen </button>
-                    </InputGroup>
+                            </InputGroup>
+                        </Col>
+                        <Col>
+                            <InputGroup>
+                                <button className="btn-warning">Spara nytt lösen </button>
+                            </InputGroup>
+                        </Col>
+                    </Row>
                 </Form>
             )
         }
@@ -123,30 +129,35 @@ export default class User extends Component {
         if (this.state.showEmailChange) {
             return(
                 <Form>
-                    <InputGroup className="mb-3 row">
+
+                        <InputGroup className="mb-3">
+                            <InputGroup>
+                                <InputGroup id="email_old">Nuvarande email</InputGroup>
+                            </InputGroup>
+                            <FormControl
+                                placeholder="Nuvarande email"
+                                aria-label="Nuvarande email"
+                                aria-describedby="email_old"
+                            />
+                            <InputGroup id="email_new">Ny email</InputGroup>
+                            <InputGroup>
+                                <FormControl
+                                    placeholder="Ny email"
+                                    aria-label="Ny email"
+                                    aria-describedby="email_new"
+                                />
+                                <InputGroup id="email_new_c">Bekräfta ny email</InputGroup>
+                            </InputGroup>
+                            <FormControl
+                                placeholder="Bekräfta ny email"
+                                aria-label="Bekräfta ny email"
+                                aria-describedby="email_new_c"
+                            />
+                        </InputGroup>
                         <InputGroup>
-                            <InputGroup id="email_old">Nuvarande email</InputGroup>
+                            <button className="btn-warning">Spara nytt lösen </button>
                         </InputGroup>
-                        <FormControl
-                            placeholder="Nuvarande email"
-                            aria-label="Nuvarande email"
-                            aria-describedby="email_old"
-                        />
-                        <InputGroup id="email_new">Ny email</InputGroup>
-                        <InputGroup>
-                        <FormControl
-                            placeholder="Ny email"
-                            aria-label="Ny email"
-                            aria-describedby="email_new"
-                        />
-                        <InputGroup id="email_new_c">Bekräfta ny email</InputGroup>
-                        </InputGroup>
-                        <FormControl
-                            placeholder="Bekräfta ny email"
-                            aria-label="Bekräfta ny email"
-                            aria-describedby="email_new_c"
-                        />
-                        </InputGroup>
+
                 </Form>
             )
         }
