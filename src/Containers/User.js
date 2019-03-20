@@ -169,7 +169,6 @@ export default class User extends Component {
                         <LoaderButton block
                                       bsStyle="primary"
                                       bsSize="large"
-                            //    disabled={!this.validateForm()}
                                       type="submit"
                                       isLoading={this.state.isLoading}
                                       text="Byt lösen"
