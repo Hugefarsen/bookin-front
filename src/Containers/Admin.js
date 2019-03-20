@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {LinkContainer} from "react-router-bootstrap";
 import {ControlLabel, FormControl, FormGroup, Glyphicon, PageHeader, PanelGroup, Panel, Button, Table} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
-import ActivityList from "./ActivityList"
 import Moment from "moment";
 import DateTime from "react-datetime";
 import $ from "jquery";
@@ -230,7 +229,7 @@ export default class Admin extends Component {
             url: config.apiUrl + '/user',
             dataType: 'json',
             headers: {
-                'Authorization': 'Bearer ' + this.props.user.token,
+                'Authorization': 'Bearer ' + this.props.user.token
             },
             cache: false,
             success: function(data){

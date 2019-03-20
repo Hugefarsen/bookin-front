@@ -46,16 +46,18 @@ class App extends Component {
 
     getLoggedUser(){
         if(localStorage.getItem('user')){
-            let user = JSON.parse(localStorage.getItem('user'))
+            let user = JSON.parse(localStorage.getItem('user'));
             if (user){
                 this.setState({user : user})
                 let i;
-                for (i = 0; i < user.role.length; i++) {
-                    if(user.role[i].role === 'Admin'){
-                        this.userIsAdmin(true);
-                    }
-                    if(user.role[i].role === 'Supervisor'){
-                        this.userIsSupervisor(true);
+                if(user.role.length){
+                    for (i = 0; i < user.role.length; i++) {
+                        if(user.role[i].role === 'Admin'){
+                            this.userIsAdmin(true);
+                        }
+                        if(user.role[i].role === 'Supervisor'){
+                            this.userIsSupervisor(true);
+                        }
                     }
                 }
                 this.userHasAuthenticated(true);

@@ -29,7 +29,6 @@ export default class Activity extends Component {
     checkBooked(users){
         var i;
         for (i = 0; i < users.length; i++) {
-             console.log(i);
              if(users[i].id === this.props.user.id){
                  this.setState({isBooked: true})
              }

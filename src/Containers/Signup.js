@@ -19,6 +19,8 @@ export default class Signup extends Component {
         };
     }
 
+
+
     validateForm() {
         return (
             this.state.email.length > 0 &&
@@ -51,11 +53,21 @@ export default class Signup extends Component {
             },
             cache: false,
             success: function(data){
-                this.props.userLog(data.success);
-                this.setState({password: "", email: "", c_password: "", isLoading: false }, function(){
-                    localStorage.setItem('user', JSON.stringify(data.success));
-                    })
+                let user = data.success;
+                user['token'] = data.token;
+                this.props.userLog(user);
+                this.setState( { password: "", isLoading: false}, function(){
+                    localStorage.setItem('user', JSON.stringify(user));
+                });
+                var i;
+                for (i = 0; i < user.role.length; i++) {
+                    if(user.role[i].role === 'Admin'){
+                        this.props.userIsAdmin(true);
+
+                    }
+                }
                 this.props.userHasAuthenticated(true);
+                this.props.history.push("/");
 
             }.bind(this),
             error: (xhr, status, err) => {
